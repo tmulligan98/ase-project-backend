@@ -1,7 +1,9 @@
 from fastapi import FastAPI
-from fastapi.openapi.docs import get_swagger_ui_html
+from backend.routers import sample_router
 
-app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+API_VERSION_PREFIX = "/api/1"
+
+app = FastAPI()
 
 
 @app.get("/health")
@@ -9,10 +11,7 @@ async def health_check():
     return {"status": "UP"}
 
 
-@app.get("/docs")
-async def get_documentation():
-    return get_swagger_ui_html(openapi_url="/openapi.json", title="docs")
-
+app.include_router(sample_router.router, prefix=API_VERSION_PREFIX)
 
 if __name__ == "__main__":
     import uvicorn
