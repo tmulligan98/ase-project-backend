@@ -8,7 +8,7 @@ We will use `python 3.8`, all of the required dependencies are included in `requ
 Please use an environment manager (conda).
 To install all dependencies, `pip install -r requirements.dev.txt`.
 
-**When we run into problems that require new libraries, be sure to add them to `requirements.txt`!!!
+**When we run into problems that require new libraries, be sure to add them to `requirements.txt`!!!**
 
 ### External Requirements
 
@@ -56,7 +56,7 @@ We use Docker when deploying the application in order to maintain a clean and sc
 
 Install [docker](https://docs.docker.com/get-docker/) locally in order to be able to build and run the Docker file and container.
 
-Once you have installed docker you can then build the image by running `docker build -t backend-app .`. This builds the docker image with the tag `rgrid-app`. The first time you do this, it might take some time to build as the image will need to download and install all dependencies.
+Once you have installed docker you can then build the image by running `docker build -t backend-app .`. This builds the docker image with the tag `backend-app`. The first time you do this, it might take some time to build as the image will need to download and install all dependencies.
 
 To run the image after building you can run `docker run -it backend-app`. This runs the docker in interactive mode so you will be able to see environment logs. Depending on your local setup, this setup might not work due to missing environment variables - you need to ensure that you are passing these to the docker container on `run` - see more [here](https://docs.docker.com/engine/reference/commandline/run/).
 
@@ -69,7 +69,7 @@ New functionalities need to be unit tested to insure high coverage and reproduci
 Test coverage is measured using `pytest-cov` and reported on any new MR.
 
 ## Contributing
-
-Contribution must be done via Pull Requests and merge with the `development` branch. This allows us to do code review, but also run unit tests and linting checks on the code itself.
+Please make your own branch!
+Contribution must be done via Pull Requests and merge with the `main` branch. This allows us to do code review, but also run unit tests and linting checks on the code itself.
 
 Commit messages must try to follow the [conventional commits message format](https://www.conventionalcommits.org/en/v1.0.0-beta.2/).
