@@ -41,7 +41,7 @@ As a type validation, Fast API uses the [Pydantic](https://pydantic-docs.helpman
 
 ### Start the application
 
-In order to start the app, and once your environment is activated and ready, simply run: `uvicorn server.main:app --reload`. Note that you will need to have installed the `uvicorn` server. You can pass in other parameters here to control the port and other configurations (the default port is 8000). Using the `--reload` flag will automatically reload the server after changes to the code are made.
+In order to start the app, and once your environment is activated and ready, simply run: `uvicorn backend.main:app --reload`. Note that you will need to have installed the `uvicorn` server. You can pass in other parameters here to control the port and other configurations (the default port is 8000). Using the `--reload` flag will automatically reload the server after changes to the code are made.
 
 You can also run the app inside vscode to allow for interactive debugging by running the command in debugging mode.
 
