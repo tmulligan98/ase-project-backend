@@ -2,7 +2,6 @@ alembic==1.7.5
 anyio==3.5.0
 asgiref==3.4.1
 attrs==21.4.0
-black==21.12b0
 click==8.0.3
 fastapi==0.72.0
 greenlet==1.1.2
