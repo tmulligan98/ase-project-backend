@@ -12,10 +12,10 @@ services:
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_DATABASE: "mysql_db"
       MYSQL_USER: "user"
-      MYSQL_PASSWORD: "password"  
+      MYSQL_PASSWORD: "password"
     volumes:
       - mysql_data:/var/lib/mysql
-    
+
   app:
     container_name: app
     build: .
@@ -31,4 +31,4 @@ services:
 volumes:
   mysql_data:
 
-
+    null

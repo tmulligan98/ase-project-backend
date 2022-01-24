@@ -56,9 +56,15 @@ We use Docker when deploying the application in order to maintain a clean and sc
 
 Install [docker](https://docs.docker.com/get-docker/) locally in order to be able to build and run the Docker file and container.
 
-Once you have installed docker you can then build the image by running `docker build -t backend-app .`. This builds the docker image with the tag `backend-app`. The first time you do this, it might take some time to build as the image will need to download and install all dependencies.
+To run it make sure you have docker desktop running in your local machine and after creating the virtual environment and installing all the updated dependencies from requirements.txt use the following commands to setup the containers:
 
-To run the image after building you can run `docker run -it backend-app`. This runs the docker in interactive mode so you will be able to see environment logs. Depending on your local setup, this setup might not work due to missing environment variables - you need to ensure that you are passing these to the docker container on `run` - see more [here](https://docs.docker.com/engine/reference/commandline/run/).
+docker-compose up --build
+*It will take some time to load it up
+*After you can see the backend app starting on 0.0.0.0:8000/
+and to validate if the instance is connected to database, run:-
+docker exec -it mysql_db bash,
+and you will be entered in a mysql shell.
+
 
 ## Running Tests and Code Quality
 
