@@ -4,12 +4,7 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches:
-      - "**"
-  pull_request:
-    branches:
-      - "**"
+  [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,15 +20,18 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{matrix.python-version}}
+
       - name: Install dependencies
         run:
           python -m pip install --upgrade pip
           pip install -r requirements.dev.txt
-      - name: Code Linting
-        run:
-          black
-          flake8 --verbose
-          mypy
+
+      - name: Linting
+        uses: wearerequired/lint-action@v1
+        with:
+          black: true
+          flake8: true
+          mypy: true
 
       - name: Unit Testing
         run:
