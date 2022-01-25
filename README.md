@@ -29,6 +29,18 @@ If you use pycharm then follow this [guide](https://black.readthedocs.io/en/stab
 
 As a rule: never commit your local IDE setting to this repository.
 
+
+### Environment Variables
+**What are these?**
+These are variables used througout our system. For example, an access key to a given API
+We will use a `.env` file to store out env variables. This file is read using the Pydantic `BaseSettings` class, which will contain secrete access keys for external APIs, such as TomTom. Any local environment values will be overwritten by those in the `.env` file.
+For security reasons, the `.env` file is excluded from git.
+
+For our application to work, you will need to create a `.env` file with the following environment variable(s):
+
+    - TOM_TOM_ACCESS_Key
+
+
 ### Pre-commit
 
 We have a pre-commit configuration that you can use to ensure that your code is formatted properly and passes flake8 (lint) checks before it is even committed. In order to set up pre-commit you need to install it locally, check instructions [here](https://pre-commit.com/#intro).
