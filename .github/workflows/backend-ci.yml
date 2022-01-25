@@ -31,7 +31,6 @@ jobs:
           black: true
           flake8: true
           mypy: true
-          isort: true
 
       - name: Unit Testing
         run: pytest
