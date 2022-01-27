@@ -9,6 +9,10 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   test:
+    run: |
+      touch .env
+      echo TOMTOM_ACCESS_KEY=""
+      cat .env
     env:
      TOMTOM_ACCESS_KEY : ""
     runs-on: ubuntu-latest
