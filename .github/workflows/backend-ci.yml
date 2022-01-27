@@ -11,7 +11,7 @@ on:
 jobs:
   test:
     env:
-     TOMTOM_ACCESS_KEY : ""
+     TOM_TOM_ACCESS_KEY : ""
     runs-on: ubuntu-latest
     strategy:
       matrix:
