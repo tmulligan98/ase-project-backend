@@ -1,8 +1,34 @@
-from requests import get
+from typing import Dict, Any
+import requests
 import json
 from backend.utils import SETTINGS
-from .models import TrafficFlowModel
+from .models import TrafficFlowModel, StreetModel
 from .endpoints import TOMTOM_TRAFFIC_FLOW
+
+
+def parse_tom_tom_response(body: Dict[str, Any]) -> StreetModel:
+    """
+    Function to parse content from the TomTom Traffic
+    flow reponse
+
+    Parameters
+    ----------
+    body : dict
+        Dictionary containing the reponse details from TomTom
+
+    Returns
+    -------
+    model : StreetModel
+    Basemodel containing the info we want
+    """
+    details = body["flowSegmentData"]
+    speed = details["currentSpeed"]
+    temp_coords = details["coordinates"]["coordinate"]
+
+    coords = [(c["latitude"], c["longitude"]) for c in temp_coords]
+
+    model = StreetModel(speed=speed, coords_of_street=coords)
+    return model
 
 
 def construct_tomtom_url(lat: float, long: float, zoom: float) -> str:
@@ -28,7 +54,6 @@ def construct_tomtom_url(lat: float, long: float, zoom: float) -> str:
     return url
 
 
-# TODO: Specify pydantic basemodel
 def get_tomtom_traffic_flow(lat: float, long: float, zoom: float) -> TrafficFlowModel:
     """
     Utility function to fetch traffic flow data
@@ -49,13 +74,11 @@ def get_tomtom_traffic_flow(lat: float, long: float, zoom: float) -> TrafficFlow
     """
 
     url = construct_tomtom_url(lat, long, zoom)
-    body = get(url).content
+    body = requests.get(url).content
 
     # Construct JSON body
     json_body = json.loads(body)
-    print(json_body)
     # Populate the model with information
-    model = TrafficFlowModel()
-
+    model = parse_tom_tom_response(json_body)
     # Return the model
     return model

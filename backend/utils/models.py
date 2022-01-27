@@ -1,8 +1,9 @@
 from pydantic import BaseModel
 from typing import Tuple, List
+from enum import Enum
 
 
-class StreetModel(BaseModel):
+class StreetModel(BaseModel):  # External API Models
     """
     Model for a street. Contain info regarding flow on that street
     """
@@ -20,3 +21,14 @@ class TrafficFlowModel(BaseModel):
 
     # For now...
     streets: List[StreetModel]
+
+
+class TrafficSources(Enum):
+    TOMTOM = "tomtom"
+    # Add more as they come
+
+
+# Error Models
+class ErrorModel(BaseModel):
+    message: str
+    code: int
