@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     env:
-      tomtom_access_key: ""
+     TOMTOM_ACCESS_KEY : ""
     runs-on: ubuntu-latest
     strategy:
       matrix:
