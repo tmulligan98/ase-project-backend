@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Tuple, List
+from typing import List
 from enum import Enum
 
 
@@ -8,9 +8,8 @@ class StreetModel(BaseModel):  # External API Models
     Model for a street. Contain info regarding flow on that street
     """
 
-    coords_of_street: List[
-        Tuple[float, float]
-    ]  # Coords marking out the segment of street concerned
+    coords_of_street: List[tuple]  # Coords marking out the segment of street concerned
+    # NOTE: OpenAPI has a big with typed tuples :(
     speed: int  # Speed of travel on that street
 
 

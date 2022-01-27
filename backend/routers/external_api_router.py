@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi import APIRouter, status, Response
 from backend.utils import (
     get_tomtom_traffic_flow,
@@ -11,14 +11,14 @@ router = APIRouter()
 
 
 class TrafficFlowInputModel(BaseModel):
-    lat: int
-    long: int
-    zoom: int
+    lat: float
+    long: float
+    zoom: int = Field(gt=5, lt=20)
     api_source: TrafficSources
 
 
 @router.post("/traffic_flow", response_model=TrafficFlowModel)
-async def post_traffic_flow(
+def post_traffic_flow(
     body: TrafficFlowInputModel, response: Response
 ) -> TrafficFlowModel:
     """
@@ -27,8 +27,9 @@ async def post_traffic_flow(
     """
     try:
         # Depending on source specified...
-        if body.source == "tomtom":
+        if body.api_source == TrafficSources.TOMTOM:
             res = get_tomtom_traffic_flow(body.lat, body.long, body.zoom)
+        response.status_code = status.HTTP_200_OK
         return res
     except Exception:  # Should probably do proper error handling...
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR

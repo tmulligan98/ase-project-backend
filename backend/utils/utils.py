@@ -81,4 +81,4 @@ def get_tomtom_traffic_flow(lat: float, long: float, zoom: float) -> TrafficFlow
     # Populate the model with information
     model = parse_tom_tom_response(json_body)
     # Return the model
-    return model
+    return TrafficFlowModel(streets=[model])

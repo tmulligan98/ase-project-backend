@@ -1,10 +1,11 @@
 import unittest
 import json
 from unittest.mock import patch
-from backend.utils import get_tomtom_traffic_flow
+from starlette.testclient import TestClient
+from backend.main import app
 
 
-class TestExternalAPI(unittest.TestCase):
+class TestExternalAPIEndpoint(unittest.TestCase):
 
     # Example responses
     tomtom_example_response = {
@@ -21,6 +22,10 @@ class TestExternalAPI(unittest.TestCase):
 
     """Suite of mock tests to ensure we can handle data from our chosen external APIs"""
 
+    def setUp(self):
+        """Initialize the app"""
+        self.test_app = TestClient(app)
+
     @patch("backend.utils.utils.requests.get")
     def test_tomtom_traffic_flow(self, mock_get):
 
@@ -33,8 +38,14 @@ class TestExternalAPI(unittest.TestCase):
 
         # Run the call. This function should return a body of information regarding
         # ... traffic flow on nearby streets
-        res = get_tomtom_traffic_flow(lat=123.456, long=123.456, zoom=18)
+        response = self.test_app.post(
+            "/api/1/traffic_flow",
+            data=json.dumps(
+                {"lat": 12.34, "long": 12.34, "zoom": 10, "api_source": "tomtom"}
+            ),
+        )
 
-        # Assert that we are extracting information from the api response correctly
-        self.assertEqual(res.streets[0].coords_of_street, [(123.456, 123.456)])
-        self.assertEqual(res.streets[0].speed, 63)
+        # Assert...
+        self.assertEqual(response.status_code, 200)
+        res = response.json()
+        self.assertEqual(res["streets"][0]["speed"], 63)
