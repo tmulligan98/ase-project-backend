@@ -1,9 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 name: CI
-run: |
-    touch .env
-    echo TOMTOM_ACCESS_KEY=""
-    cat .env
+
 
 # Controls when the workflow will run
 on:
@@ -21,6 +18,13 @@ jobs:
         python-version: [3.8]
 
     steps:
+      - name: Create env
+        run: |
+          touch .env
+          echo TOMTOM_ACCESS_KEY=""
+          cat .env
+
+
       - uses: actions/checkout@v2
       - name: Set up Python ${{matrix.python-version}}
         uses: actions/setup-python@v2
