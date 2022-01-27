@@ -1,11 +1,11 @@
 from pydantic import BaseModel, Field
 from fastapi import APIRouter, status, Response
-from backend.utils import (
+from backend.external_apis import (
     get_tomtom_traffic_flow,
     TrafficFlowModel,
-    ErrorModel,
     TrafficSources,
 )
+from utils import ErrorModel
 
 router = APIRouter()
 

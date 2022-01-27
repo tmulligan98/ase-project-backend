@@ -1,7 +1,7 @@
 import unittest
 import json
 from unittest.mock import patch
-from backend.utils import get_tomtom_traffic_flow
+from backend.external_apis import get_tomtom_traffic_flow
 
 
 class TestExternalAPI(unittest.TestCase):

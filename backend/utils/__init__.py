@@ -1,11 +1,10 @@
 from .settings import SETTINGS
-from .utils import get_tomtom_traffic_flow
-from .models import TrafficFlowModel, ErrorModel, TrafficSources
+from .logger import init_logger, get_logger
+from .models import ErrorModel
 
 ___all__ = [
     "SETTINGS",
-    "get_tomtom_traffic_flow",
-    "TrafficModel",
     "ErrorModel",
-    "TrafficSources",
+    "init_logger",
+    "get_logger",
 ]
