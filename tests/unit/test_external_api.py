@@ -21,7 +21,7 @@ class TestExternalAPI(unittest.TestCase):
 
     """Suite of mock tests to ensure we can handle data from our chosen external APIs"""
 
-    @patch("backend.utils.utils.requests.get")
+    @patch("backend.external_apis.external_apis.requests.get")
     def test_tomtom_traffic_flow(self, mock_get):
 
         # Set up our sample response object

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from backend.routers import external_api_router, sample_router
-from utils import init_logger
+from backend.utils import init_logger
 
 API_VERSION_PREFIX = "/api/1"
 

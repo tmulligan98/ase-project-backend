@@ -5,7 +5,7 @@ from backend.external_apis import (
     TrafficFlowModel,
     TrafficSources,
 )
-from utils import ErrorModel
+from backend.utils import ErrorModel
 
 router = APIRouter()
 

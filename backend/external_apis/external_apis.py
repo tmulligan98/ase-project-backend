@@ -1,10 +1,9 @@
 from typing import Dict, Any
 import requests
 import json
-from backend.utils import SETTINGS
+from backend.utils import SETTINGS, get_logger
 from .models import TrafficFlowModel, StreetModel
 from .endpoints import TOMTOM_TRAFFIC_FLOW
-from utils import get_logger
 
 logger = get_logger()
 

@@ -26,7 +26,7 @@ class TestExternalAPIEndpoint(unittest.TestCase):
         """Initialize the app"""
         self.test_app = TestClient(app)
 
-    @patch("backend.utils.utils.requests.get")
+    @patch("backend.external_apis.external_apis.requests.get")
     def test_tomtom_traffic_flow(self, mock_get):
 
         # Set up our sample response object
