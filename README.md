@@ -70,9 +70,11 @@ Install [docker](https://docs.docker.com/get-docker/) locally in order to be abl
 
 To run it make sure you have docker desktop running in your local machine and after creating the virtual environment and installing all the updated dependencies from requirements.txt use the following commands to setup the containers:
 
-docker-compose up --build
-*It will take some time to load it up
-*After you can see the backend app starting on 0.0.0.0:8000/
+**Locally**
+docker-compose --env-file ./env up --build
+- Make sure you have a file called env.list containing the required env variables in the same directory.
+- It will take some time to load it up
+- After you can see the backend app starting on 0.0.0.0:8000/
 and to validate if the instance is connected to database, run:-
 docker exec -it mysql_db bash,
 and you will be entered in a mysql shell.
