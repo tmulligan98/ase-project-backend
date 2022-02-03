@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 from backend.routers import external_api_router, sample_router
 from backend.utils import init_logger
+from backend.database_wrapper import connect_db
 from fastapi.middleware.cors import CORSMiddleware
 
 API_VERSION_PREFIX = "/api/1"
 
 app = FastAPI()
 logger = init_logger()
-
+engine = connect_db()
 
 origins = ["http://localhost:3000", "localhost:3000"]
 
@@ -19,6 +20,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+async def start_up():
+    logger.info("Starting up...")
 
 
 @app.get("/")
