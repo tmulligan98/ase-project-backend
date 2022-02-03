@@ -1,7 +1,12 @@
-import unittest
 import json
+import unittest
 from unittest.mock import patch
+
+from dotenv import load_dotenv
+
 from backend.external_apis import get_tomtom_traffic_flow
+
+load_dotenv(".env")
 
 
 class TestExternalAPI(unittest.TestCase):
