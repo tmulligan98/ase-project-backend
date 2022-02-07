@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from sqlalchemy import true
 from backend.routers import external_api_router, sample_router
 from backend.utils import init_logger
 from fastapi.middleware.cors import CORSMiddleware
