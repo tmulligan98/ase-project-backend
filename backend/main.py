@@ -23,7 +23,7 @@ app.add_middleware(
 
 @app.get("/")
 def hello_world():
-    return {"message": "Hello World"}
+    return {"Disaster Status": "", "Disaster Location": ""}
 
 
 @app.get("/health")
