@@ -11,12 +11,12 @@ jobs:
   test:
     env:
       TOM_TOM_ACCESS_KEY: ""
-      DATABASE_URL: ""
       DB_USER: ""
       DB_PASSWORD: ""
       DB_NAME: ""
       PGADMIN_EMAIL: ""
       PGADMIN_PASSWORD: ""
+      DATABASE_URL: ""
     runs-on: ubuntu-latest
     strategy:
       matrix:

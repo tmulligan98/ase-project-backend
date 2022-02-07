@@ -1,15 +1,35 @@
 import json
 import unittest
+from fastapi.testclient import TestClient
 from unittest.mock import patch
-
-from dotenv import load_dotenv
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from backend.main import app
+from backend.database_wrapper import Base, get_db
 from backend.external_apis import get_tomtom_traffic_flow
-
-load_dotenv(".env")
 
 
 class TestExternalAPI(unittest.TestCase):
+
+    SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2:///./test.db"
+
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+    Base.metadata.create_all(bind=engine)
+
+    def override_get_db(self):
+        try:
+            db = self.TestingSessionLocal()
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+
+    client = TestClient(app)
 
     # Example responses
     tomtom_example_response = {
