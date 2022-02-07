@@ -49,7 +49,13 @@ def get_db():
 
 @app.get("/")
 def hello_world():
-    return {"Disaster Status": "", "Disaster Location": ""}
+    return {
+        "disasterStatus": True,
+        "disasterLocation": {
+            "longitude": 0,
+            "latitude": 0,
+        },
+    }
 
 
 @app.get("/health")
