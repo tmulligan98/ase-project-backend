@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from sqlalchemy import true
 from backend.routers import external_api_router, sample_router
 from backend.utils import init_logger
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,7 +24,13 @@ app.add_middleware(
 
 @app.get("/")
 def hello_world():
-    return {"Disaster Status": "", "Disaster Location": ""}
+    return {
+        "disasterStatus": True,
+        "disasterLocation": {
+            "longitude": 0,
+            "latitude": 0,
+        },
+    }
 
 
 @app.get("/health")
