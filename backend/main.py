@@ -1,11 +1,21 @@
 from fastapi import FastAPI
-from backend.routers import external_api_router, sample_router
-from backend.utils import init_logger
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_sqlalchemy import DBSessionMiddleware
+from backend.utils import SETTINGS
+from backend.database_wrapper import Base, ENGINE
+from backend.routers import database_wrapper_router, external_api_router, sample_router
+from backend.utils import init_logger
+
 
 API_VERSION_PREFIX = "/api/1"
 
+Base.metadata.create_all(bind=ENGINE)
+# ENGINE = get_db_engine()
+# BASE = get_db_base()
+# BASE.metadata.create_all(bind=ENGINE)
+
 app = FastAPI()
+
 logger = init_logger()
 
 
@@ -18,6 +28,10 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+app.add_middleware(
+    DBSessionMiddleware,
+    db_url=SETTINGS.database_url,
 )
 
 
@@ -39,6 +53,7 @@ async def health_check():
 
 app.include_router(sample_router.router, prefix=API_VERSION_PREFIX)
 app.include_router(external_api_router.router, prefix=API_VERSION_PREFIX)
+app.include_router(database_wrapper_router.router, prefix=API_VERSION_PREFIX)
 
 
 if __name__ == "__main__":

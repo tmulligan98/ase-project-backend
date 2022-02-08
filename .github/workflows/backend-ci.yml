@@ -1,7 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 name: CI
 
-
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
@@ -11,7 +10,13 @@ on:
 jobs:
   test:
     env:
-     TOM_TOM_ACCESS_KEY : ""
+      TOM_TOM_ACCESS_KEY: ""
+      DB_USER: ""
+      DB_PASSWORD: ""
+      DB_NAME: ""
+      PGADMIN_EMAIL: ""
+      PGADMIN_PASSWORD: ""
+      DATABASE_URL: ""
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,8 +27,13 @@ jobs:
         run: |
           touch .env
           echo TOM_TOM_ACCESS_KEY=""
+          echo DATABASE_URL: ""
+          echo DB_USER: ""
+          echo DB_PASSWORD: ""
+          echo DB_NAME: ""
+          echo PGADMIN_EMAIL: ""
+          echo PGADMIN_PASSWORD: ""
           cat .env
-
 
       - uses: actions/checkout@v2
       - name: Set up Python ${{matrix.python-version}}
