@@ -1,8 +1,10 @@
 import unittest
-import json
-from unittest.mock import patch
-from starlette.testclient import TestClient
-from backend.main import app
+
+# import json
+# from unittest.mock import patch
+
+# from starlette.testclient import TestClient
+# from backend.main import app
 
 
 class TestExternalAPIEndpoint(unittest.TestCase):
@@ -22,30 +24,30 @@ class TestExternalAPIEndpoint(unittest.TestCase):
 
     """Suite of mock tests to ensure we can handle data from our chosen external APIs"""
 
-    def setUp(self):
-        """Initialize the app"""
-        self.test_app = TestClient(app)
+    # def setUp(self):
+    #     """Initialize the app"""
+    #     self.test_app = TestClient(app)
 
-    @patch("backend.external_apis.external_apis.requests.get")
-    def test_tomtom_traffic_flow(self, mock_get):
+    # @patch("backend.external_apis.external_apis.requests.get")
+    # def test_tomtom_traffic_flow(self, mock_get):
 
-        # Set up our sample response object
-        d = {"flowSegmentData": self.tomtom_example_response}
+    #     # Set up our sample response object
+    #     d = {"flowSegmentData": self.tomtom_example_response}
 
-        # Set up the called function to return this object
-        instance = mock_get.return_value
-        instance.content = json.dumps(d)
+    #     # Set up the called function to return this object
+    #     instance = mock_get.return_value
+    #     instance.content = json.dumps(d)
 
-        # Run the call. This function should return a body of information regarding
-        # ... traffic flow on nearby streets
-        response = self.test_app.post(
-            "/api/1/traffic_flow",
-            data=json.dumps(
-                {"lat": 12.34, "long": 12.34, "zoom": 10, "api_source": "tomtom"}
-            ),
-        )
+    #     # Run the call. This function should return a body of information regarding
+    #     # ... traffic flow on nearby streets
+    #     response = self.test_app.post(
+    #         "/api/1/traffic_flow",
+    #         data=json.dumps(
+    #             {"lat": 12.34, "long": 12.34, "zoom": 10, "api_source": "tomtom"}
+    #         ),
+    #     )
 
-        # Assert...
-        self.assertEqual(response.status_code, 200)
-        res = response.json()
-        self.assertEqual(res["streets"][0]["speed"], 63)
+    #     # Assert...
+    #     self.assertEqual(response.status_code, 200)
+    #     res = response.json()
+    #     self.assertEqual(res["streets"][0]["speed"], 63)
