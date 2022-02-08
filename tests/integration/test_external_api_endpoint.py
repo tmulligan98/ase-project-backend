@@ -1,30 +1,30 @@
-import unittest
-
-# import json
-# from unittest.mock import patch
-
-# from starlette.testclient import TestClient
-# from backend.main import app
-
-
-class TestExternalAPIEndpoint(unittest.TestCase):
-
-    # Example responses
-    tomtom_example_response = {
-        "frc": "FRC3",
-        "currentSpeed": 63,
-        "freeFlowSpeed": 63,
-        "currentTravelTime": 152,
-        "freeFlowTravelTime": 152,
-        "confidence": 1,
-        "roadClosure": False,
-        "coordinates": {"coordinate": [{"latitude": 123.456, "longitude": 123.456}]},
-        "@version": "blahblah",
-    }
-
-    """Suite of mock tests to ensure we can handle data from our chosen external APIs"""
-
-    # def setUp(self):
+#import unittest
+#
+## import json
+## from unittest.mock import patch
+#
+## from starlette.testclient import TestClient
+## from backend.main import app
+#
+#
+#class TestExternalAPIEndpoint(unittest.TestCase):
+#
+#    # Example responses
+#    tomtom_example_response = {
+#        "frc": "FRC3",
+#        "currentSpeed": 63,
+#        "freeFlowSpeed": 63,
+#        "currentTravelTime": 152,
+#        "freeFlowTravelTime": 152,
+#        "confidence": 1,
+#        "roadClosure": False,
+#        "coordinates": {"coordinate": [{"latitude": 123.456, "longitude": 123.456}]},
+#        "@version": "blahblah",
+#    }
+#
+#    """Suite of mock tests to ensure we can handle data from our chosen external APIs"""
+#
+#    # def setUp(self):
     #     """Initialize the app"""
     #     self.test_app = TestClient(app)
 
