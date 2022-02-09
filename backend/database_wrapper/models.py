@@ -1,6 +1,13 @@
 from sqlalchemy import Boolean, Column, Integer, String
-
+from enum import Enum
 from .database import Base
+
+
+class DisasterType(Enum):
+    FIRE = 0
+    FLOOD = 1
+    ROAD_INCIDENT = 2
+    PUBLIC_DISTRURBANCE = 3
 
 
 class User(Base):

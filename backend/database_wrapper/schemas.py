@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from .models import DisasterType
 
 
 class UserBase(BaseModel):
@@ -19,15 +20,20 @@ class User(UserBase):
 
 
 class DisasterBase(BaseModel):
-    name: str
-
-
-class DisasterCreate(DisasterBase):
     pass
 
 
+class DisasterCreate(DisasterBase):
+    user_id: str  # Foreign key to users table
+    disaster_id: str  # PK
+    lat: float
+    long: float
+    scale: int
+    disaster_type: DisasterType
+
+
 class Disaster(DisasterBase):
-    id: int
+    disaster_id: int
 
     class Config:
         orm_mode = True

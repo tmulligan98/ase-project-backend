@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from backend.database_wrapper import (
     User,
     UserCreate,
@@ -51,12 +51,15 @@ def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(g
 
 
 @router.post("/disasters/", response_model=Disaster)
-def add_disaster(disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)):
+def add_disaster(
+    disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db), response=Response
+):
     db_user = get_disaster_by_name(db, name=disaster.name)
     if db_user:
         raise HTTPException(
             status_code=400, detail="Disaster already present in the db"
         )
+    response.status_code = status.HTTP_200_OK
     return add_disaster_to_db(db=db, disaster=disaster)
 
 
