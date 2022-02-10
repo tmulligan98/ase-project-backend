@@ -16,7 +16,6 @@ app = FastAPI()
 # This is really useful...
 logger = init_logger()
 
-
 origins = ["http://localhost:3000", "localhost:3000"]
 
 
@@ -31,6 +30,11 @@ app.add_middleware(
     DBSessionMiddleware,
     db_url=SETTINGS.database_url,
 )
+
+
+@app.on_event("startup")
+async def start_up():
+    logger.info("Starting up...")
 
 
 @app.get("/")
