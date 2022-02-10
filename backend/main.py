@@ -8,14 +8,12 @@ from backend.utils import init_logger
 
 
 API_VERSION_PREFIX = "/api/1"
-
+Base.metadata.drop_all(bind=ENGINE)
 Base.metadata.create_all(bind=ENGINE)
-# ENGINE = get_db_engine()
-# BASE = get_db_base()
-# BASE.metadata.create_all(bind=ENGINE)
 
 app = FastAPI()
 
+# This is really useful...
 logger = init_logger()
 
 

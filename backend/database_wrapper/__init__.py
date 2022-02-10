@@ -1,6 +1,6 @@
-from .database import ENGINE, Base, get_db, SESSION_LOCAL
+from .database import ENGINE, Base, SESSION_LOCAL
 from .schemas import (
-    User,
+    UserResponse,
     UserCreate,
     Disaster,
     EmergencyServiceCreate,
@@ -9,12 +9,12 @@ from .schemas import (
 )
 
 from .crud import (
-    get_user,
+    get_user_by_id,
     get_user_by_email,
     get_users,
     create_user,
     get_disasters,
-    get_disaster_by_name,
+    get_disaster_by_id,
     add_disaster_to_db,
     get_emergency_services_db,
     add_emergency_services,
@@ -24,20 +24,19 @@ ___all__ = [
     "SESSION_LOCAL",
     "ENGINE",
     "Base",
-    "get_user",
+    "get_user_by_id",
     "get_user_by_email",
     "get_users",
     "create_user",
     "get_disasters",
-    "get_disaster_by_name",
+    "get_disaster_by_id",
     "add_disaster_to_db",
     "get_emergency_services_db",
     "add_emergency_services",
-    "User",
+    "UserResponse",
     "UserCreate",
     "Disaster",
     "EmergencyServiceCreate",
-    "get_db",
     "DisasterCreate",
     "EmergencyService",
 ]

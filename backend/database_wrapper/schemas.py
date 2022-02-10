@@ -3,16 +3,16 @@ from .models import DisasterType
 
 
 class UserBase(BaseModel):
-    email: str
-    name: str
+    user_id: int
 
 
 class UserCreate(UserBase):
     password: str
+    email: str
+    name: str
 
 
-class User(UserBase):
-    id: int
+class UserResponse(UserBase):
     is_active: bool
 
     class Config:
@@ -24,8 +24,8 @@ class DisasterBase(BaseModel):
 
 
 class DisasterCreate(DisasterBase):
-    user_id: str  # Foreign key to users table
-    disaster_id: str  # PK
+    user_id: int  # Foreign key to users table
+    disaster_id: int  # PK
     lat: float
     long: float
     scale: int

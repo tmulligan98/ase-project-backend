@@ -1,0 +1,13 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+build:
+  docker:
+    web: Dockerfile
+    worker: worker/Dockerfile
+run:
+  worker:
+    command:
+      - uvicorn backend.main:app --reload
+    image: web

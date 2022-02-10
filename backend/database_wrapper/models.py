@@ -1,9 +1,9 @@
-from sqlalchemy import Boolean, Column, Integer, String
-from enum import Enum
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Enum
+from enum import Enum as PyEnum
 from .database import Base
 
 
-class DisasterType(Enum):
+class DisasterType(PyEnum):
     FIRE = 0
     FLOOD = 1
     ROAD_INCIDENT = 2
@@ -24,7 +24,16 @@ class Disaster(Base):
     __tablename__ = "disasters"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), unique=True, index=True)
+    type = Column(Enum(DisasterType), unique=False, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey(User.id),
+        unique=False,
+        index=True,
+    )
+    scale = Column(Integer, unique=False, index=True)
+    latitude = Column(Float, unique=False)
+    longitude = Column(Float, unique=False)
 
 
 class EmergencyService(Base):
