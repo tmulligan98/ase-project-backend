@@ -9,5 +9,5 @@ build:
 run:
   worker:
     command:
-      - uvicorn backend.main:app --reload
+      - uvicorn backend.main:app --reload --host=0.0.0.0 --port=${PORT:-5000}
     image: web
