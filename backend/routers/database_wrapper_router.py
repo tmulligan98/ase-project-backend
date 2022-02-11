@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from backend.database_wrapper import (
     UserResponse,
     UserCreate,
-    Disaster,
+    DisasterResponse,
     EmergencyServiceCreate,
     SESSION_LOCAL,
     create_user,
@@ -52,13 +52,13 @@ def read_user(user_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return db_user
 
 
-@router.get("/disasters/", response_model=List[Disaster])
+@router.get("/disasters/", response_model=List[DisasterResponse])
 def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
     disasters = get_disasters_from_db(db, skip=skip, limit=limit)
     return disasters
 
 
-@router.post("/disasters/", response_model=Disaster)
+@router.post("/disasters/", response_model=DisasterResponse)
 def add_disaster(disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)):
     disaster_id = get_disaster_by_id(db, id=disaster.disaster_id)
     if disaster_id:

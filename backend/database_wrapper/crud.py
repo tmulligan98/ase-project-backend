@@ -1,7 +1,13 @@
 from sqlalchemy.orm import Session
 
 from .models import User, Disaster, EmergencyService
-from .schemas import UserCreate, DisasterCreate, EmergencyServiceCreate, UserResponse
+from .schemas import (
+    UserCreate,
+    DisasterCreate,
+    EmergencyServiceCreate,
+    UserResponse,
+    DisasterResponse,
+)
 
 
 def get_user_by_id(db: Session, user_id: int):
@@ -31,7 +37,18 @@ def create_user(db: Session, user: UserCreate):
 
 
 def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Disaster).offset(skip).limit(limit).all()
+    temp = db.query(Disaster).offset(skip).limit(limit).all()
+    res = map(
+        lambda x: DisasterResponse(
+            disaster_type=x.type,
+            scale=x.scale,
+            lat=x.latitude,
+            long=x.longitude,
+        ),
+        temp,
+    )
+    print(res)
+    return list(res)
 
 
 def get_disaster_by_id(db: Session, id: int):
@@ -50,7 +67,12 @@ def add_disaster_to_db(db: Session, disaster: DisasterCreate):
     db.add(new_disaster)
     db.commit()
     db.refresh(new_disaster)
-    return disaster
+    return DisasterResponse(
+        disaster_type=disaster.disaster_type,
+        scale=disaster.scale,
+        lat=disaster.lat,
+        long=disaster.long,
+    )
 
 
 def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):

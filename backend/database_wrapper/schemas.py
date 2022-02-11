@@ -20,20 +20,19 @@ class UserResponse(UserBase):
 
 
 class DisasterBase(BaseModel):
-    pass
-
-
-class DisasterCreate(DisasterBase):
-    user_id: int  # Foreign key to users table
-    disaster_id: int  # PK
     lat: float
     long: float
     scale: int
     disaster_type: DisasterType
 
 
-class Disaster(DisasterBase):
-    disaster_id: int
+class DisasterCreate(DisasterBase):
+    user_id: int  # Foreign key to users table
+    disaster_id: int  # PK
+
+
+class DisasterResponse(DisasterBase):
+    pass
 
     class Config:
         orm_mode = True

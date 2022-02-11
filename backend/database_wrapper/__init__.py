@@ -2,7 +2,7 @@ from .database import ENGINE, Base, SESSION_LOCAL
 from .schemas import (
     UserResponse,
     UserCreate,
-    Disaster,
+    DisasterResponse,
     EmergencyServiceCreate,
     DisasterCreate,
     EmergencyService,
@@ -35,7 +35,7 @@ ___all__ = [
     "add_emergency_services",
     "UserResponse",
     "UserCreate",
-    "Disaster",
+    "DisasterResponse",
     "EmergencyServiceCreate",
     "DisasterCreate",
     "EmergencyService",
