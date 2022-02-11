@@ -30,7 +30,7 @@ def create_user(db: Session, user: UserCreate):
     return UserResponse(user_id=user.user_id, is_active=True)
 
 
-def get_disasters(db: Session, skip: int = 0, limit: int = 100):
+def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Disaster).offset(skip).limit(limit).all()
 
 

@@ -15,6 +15,7 @@ from backend.database_wrapper import (
     DisasterCreate,
     EmergencyService,
     get_disaster_by_id,
+    get_disasters_from_db,
 )
 from typing import List
 
@@ -53,7 +54,7 @@ def read_user(user_id: int, db: SESSION_LOCAL = Depends(get_db)):
 
 @router.get("/disasters/", response_model=List[Disaster])
 def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
-    disasters = get_disasters(db, skip=skip, limit=limit)
+    disasters = get_disasters_from_db(db, skip=skip, limit=limit)
     return disasters
 
 
