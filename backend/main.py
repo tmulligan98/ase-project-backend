@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_sqlalchemy import DBSessionMiddleware
 from backend.utils import SETTINGS
@@ -38,7 +38,9 @@ async def start_up():
 
 
 @app.get("/")
-def hello_world():
+def hello_world(request: Request):
+    client_host = request.client.host
+    logger.info(f"Client Host is Online: {client_host}")
     return {
         "disasterStatus": True,
         "disasterLocation": {
