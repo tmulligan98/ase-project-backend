@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 
 from .database import Base
 
@@ -11,6 +11,7 @@ class User(Base):
     email = Column(String(50), unique=True, index=True)
     hashed_password = Column(String(50))
     is_active = Column(Boolean, default=True)
+    disaster_id = Column(Integer, ForeignKey("disasters.id"))
 
 
 class Disaster(Base):
@@ -18,6 +19,8 @@ class Disaster(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), unique=True, index=True)
+    latitude = Column(String(10), unique=True, index=True)
+    longitude = Column(String(10), unique=True, index=True)
 
 
 class EmergencyService(Base):

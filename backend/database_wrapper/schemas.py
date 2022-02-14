@@ -4,10 +4,12 @@ from pydantic import BaseModel
 class UserBase(BaseModel):
     email: str
     name: str
+    disaster_id: int
 
 
 class UserCreate(UserBase):
     password: str
+    disaster_id: int
 
 
 class User(UserBase):
@@ -20,6 +22,8 @@ class User(UserBase):
 
 class DisasterBase(BaseModel):
     name: str
+    latitude: str
+    longitude: str
 
 
 class DisasterCreate(DisasterBase):
