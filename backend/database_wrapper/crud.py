@@ -1,15 +1,43 @@
 from sqlalchemy.orm import Session
 
-from .models import User, Disaster, EmergencyService
+from .models import User, Disaster, EmergencyService, CivilianUser
 from .schemas import (
     UserCreate,
     DisasterCreate,
     EmergencyServiceCreate,
     UserResponse,
     DisasterResponse,
+    CivilianUserModel,
 )
 
 
+# ----- Civilian user CRUD -----
+def get_civ_user_by_id(db: Session, user_id: int):
+    user = db.query(CivilianUser).filter(CivilianUser.id == user_id).first()
+    return CivilianUserModel(host_name=user.id)
+
+
+def create_civ_user(db: Session, host_name: str):
+    new_user = CivilianUser(id=host_name)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return CivilianUserModel(host_name=host_name)
+
+
+def get_civ_users(db: Session, skip: int = 0, limit: int = 100):
+    users = db.query(CivilianUser).offset(skip).limit(limit).all()
+
+    res = map(
+        lambda x: CivilianUserModel(
+            host_name=x.id,
+        ),
+        users,
+    )
+    return list(res)
+
+
+# ----- User CRUD -----
 def get_user_by_id(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
@@ -47,7 +75,6 @@ def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
         ),
         temp,
     )
-    print(res)
     return list(res)
 
 
@@ -55,11 +82,11 @@ def get_disaster_by_id(db: Session, id: int):
     return db.query(Disaster).filter(Disaster.id == id).first()
 
 
-def add_disaster_to_db(db: Session, disaster: DisasterCreate):
+def add_disaster_to_db(db: Session, disaster: DisasterCreate, host_name: str):
     new_disaster = Disaster(
         id=disaster.disaster_id,
         type=disaster.disaster_type,
-        user_id=disaster.user_id,
+        user_id=host_name,
         scale=disaster.scale,
         latitude=disaster.lat,
         longitude=disaster.long,

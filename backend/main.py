@@ -1,8 +1,11 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_sqlalchemy import DBSessionMiddleware
 from backend.utils import SETTINGS
-from backend.database_wrapper import Base, ENGINE
+from backend.database_wrapper import (
+    Base,
+    ENGINE,
+)
 from backend.routers import database_wrapper_router, external_api_router, sample_router
 from backend.utils import init_logger
 
@@ -38,9 +41,12 @@ async def start_up():
 
 
 @app.get("/")
-def hello_world(request: Request):
-    client_host = request.client.host
-    logger.info(f"Client Host is Online: {client_host}")
+def hello():
+    """
+    Hello to Server
+    """
+
+    # Return body
     return {
         "disasterStatus": True,
         "disasterLocation": {

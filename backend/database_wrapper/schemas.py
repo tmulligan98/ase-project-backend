@@ -2,6 +2,10 @@ from pydantic import BaseModel
 from .models import DisasterType
 
 
+class CivilianUserModel(BaseModel):
+    host_name: str
+
+
 class UserBase(BaseModel):
     user_id: int
 
@@ -27,7 +31,7 @@ class DisasterBase(BaseModel):
 
 
 class DisasterCreate(DisasterBase):
-    user_id: int  # Foreign key to users table
+    # user_id: int  # Foreign key to users table
     disaster_id: int  # PK
 
 

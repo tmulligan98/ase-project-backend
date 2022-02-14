@@ -6,6 +6,7 @@ from .schemas import (
     EmergencyServiceCreate,
     DisasterCreate,
     EmergencyService,
+    CivilianUserModel,
 )
 
 from .crud import (
@@ -18,7 +19,11 @@ from .crud import (
     add_disaster_to_db,
     get_emergency_services_db,
     add_emergency_services,
+    get_civ_user_by_id,
+    create_civ_user,
+    get_civ_users,
 )
+
 
 ___all__ = [
     "SESSION_LOCAL",
@@ -39,4 +44,7 @@ ___all__ = [
     "EmergencyServiceCreate",
     "DisasterCreate",
     "EmergencyService",
+    "get_civ_user_by_id",
+    "create_civ_user",
+    "get_civ_users",
 ]

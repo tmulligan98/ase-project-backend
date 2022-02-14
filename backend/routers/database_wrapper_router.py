@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from backend.database_wrapper import (
     UserResponse,
@@ -16,6 +16,8 @@ from backend.database_wrapper import (
     EmergencyService,
     get_disaster_by_id,
     get_disasters_from_db,
+    get_civ_user_by_id,
+    create_civ_user,
 )
 from typing import List
 
@@ -30,6 +32,24 @@ def get_db():
         db.close()
 
 
+# ---- Civilian Users ----
+@router.get("/handshake")
+def handshake(request: Request, db: SESSION_LOCAL = Depends(get_db)):
+    """
+    Handshake with server
+    """
+    # Get client host
+    client_host = request.client.host
+
+    # If this host has not been seen before, add as new user
+    civ = get_civ_user_by_id(db, client_host)
+
+    if civ:
+        raise HTTPException(status_code=400, detail="User already registered")
+    return create_civ_user(db=db, host_name=client_host)
+
+
+# ---- Non Civilian Users ----
 @router.post("/users/", response_model=UserResponse)
 def add_user(user: UserCreate, db: SESSION_LOCAL = Depends(get_db)):
     db_user = get_user_by_id(db, user_id=user.user_id)
@@ -52,6 +72,7 @@ def read_user(user_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return db_user
 
 
+# ---- Disasters ----
 @router.get("/disasters/", response_model=List[DisasterResponse])
 def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
     disasters = get_disasters_from_db(db, skip=skip, limit=limit)
@@ -59,13 +80,16 @@ def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(g
 
 
 @router.post("/disasters/", response_model=DisasterResponse)
-def add_disaster(disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)):
+def add_disaster(
+    request: Request, disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)
+):
+    client_host = request.client.host
     disaster_id = get_disaster_by_id(db, id=disaster.disaster_id)
     if disaster_id:
         raise HTTPException(
             status_code=400, detail="Disaster already present in the db"
         )
-    return add_disaster_to_db(db=db, disaster=disaster)
+    return add_disaster_to_db(db=db, disaster=disaster, host_name=client_host)
 
 
 @router.get("/emergency_services/", response_model=List[EmergencyService])

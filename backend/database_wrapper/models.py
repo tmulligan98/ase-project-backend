@@ -10,6 +10,11 @@ class DisasterType(PyEnum):
     PUBLIC_DISTRURBANCE = 3
 
 
+class CivilianUser(Base):
+    __tablename__ = "civilian_users"
+    id = Column(String, primary_key=True, index=True)
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -26,8 +31,8 @@ class Disaster(Base):
     id = Column(Integer, primary_key=True, index=True)
     type = Column(Enum(DisasterType), unique=False, index=True)
     user_id = Column(
-        Integer,
-        ForeignKey(User.id),
+        String,
+        ForeignKey(CivilianUser.id),
         unique=False,
         index=True,
     )
