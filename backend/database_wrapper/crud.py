@@ -13,8 +13,7 @@ from .schemas import (
 
 # ----- Civilian user CRUD -----
 def get_civ_user_by_id(db: Session, user_id: int):
-    user = db.query(CivilianUser).filter(CivilianUser.id == user_id).first()
-    return CivilianUserModel(host_name=user.id)
+    return db.query(CivilianUser).filter(CivilianUser.id == user_id).first()
 
 
 def create_civ_user(db: Session, host_name: str):
