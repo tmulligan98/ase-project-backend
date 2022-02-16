@@ -38,12 +38,12 @@ jobs:
       - uses: actions/checkout@v1
       - name: Build the docker-compose stack
         run: |
-          touch ~/home/runner/work/ase-project-backend/ase-project-backend/.env
+          touch .env
           echo DATABASE_URL: "postgresql+psycopg2://postgres:password@localhost:5432/postgres_db"
           echo DB_USER: ""
           echo DB_PASSWORD: ""
           echo DB_NAME: ""
-          cat ~/home/runner/work/ase-project-backend/ase-project-backend/.env
+          cat .env
           docker-compose up db
 
       - uses: actions/checkout@v2
