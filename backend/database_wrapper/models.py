@@ -18,7 +18,7 @@ class CivilianUser(Base):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     name = Column(String(50), index=True)
     email = Column(String(50), unique=True, index=True)
     hashed_password = Column(String(50))
@@ -28,11 +28,17 @@ class User(Base):
 class Disaster(Base):
     __tablename__ = "disasters"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     type = Column(Enum(DisasterType), unique=False, index=True)
-    user_id = Column(
+    user_id_civilian = Column(
         String,
         ForeignKey(CivilianUser.id),
+        unique=False,
+        index=True,
+    )
+    user_id_emergency = Column(
+        String,
+        ForeignKey(User.id),
         unique=False,
         index=True,
     )

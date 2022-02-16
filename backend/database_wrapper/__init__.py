@@ -7,6 +7,7 @@ from .schemas import (
     DisasterCreate,
     EmergencyService,
     CivilianUserModel,
+    DisasterCreateEmergency,
 )
 
 from .crud import (
@@ -26,6 +27,8 @@ from .crud import (
 
 
 ___all__ = [
+    "DisasterCreateEmergency",
+    "get_civ_users",
     "SESSION_LOCAL",
     "ENGINE",
     "Base",

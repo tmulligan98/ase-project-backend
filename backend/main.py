@@ -11,7 +11,7 @@ from backend.utils import init_logger
 
 
 API_VERSION_PREFIX = "/api/1"
-Base.metadata.drop_all(bind=ENGINE)
+# Base.metadata.drop_all(bind=ENGINE)
 Base.metadata.create_all(bind=ENGINE)
 
 app = FastAPI()

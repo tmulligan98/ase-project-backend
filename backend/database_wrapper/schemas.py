@@ -7,7 +7,7 @@ class CivilianUserModel(BaseModel):
 
 
 class UserBase(BaseModel):
-    user_id: int
+    user_id: str
 
 
 class UserCreate(UserBase):
@@ -32,7 +32,12 @@ class DisasterBase(BaseModel):
 
 class DisasterCreate(DisasterBase):
     # user_id: int  # Foreign key to users table
-    disaster_id: int  # PK
+    # disaster_id: int  # PK
+    pass
+
+
+class DisasterCreateEmergency(DisasterBase):
+    user_id: str
 
 
 class DisasterResponse(DisasterBase):

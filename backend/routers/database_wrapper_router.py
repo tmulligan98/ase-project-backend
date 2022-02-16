@@ -1,3 +1,4 @@
+from backend.database_wrapper.schemas import CivilianUserModel
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from backend.database_wrapper import (
@@ -14,10 +15,12 @@ from backend.database_wrapper import (
     add_emergency_services,
     DisasterCreate,
     EmergencyService,
-    get_disaster_by_id,
+    # get_disaster_by_id,
     get_disasters_from_db,
     get_civ_user_by_id,
     create_civ_user,
+    get_civ_users,
+    DisasterCreateEmergency,
 )
 from typing import List
 
@@ -49,6 +52,14 @@ def handshake(request: Request, db: SESSION_LOCAL = Depends(get_db)):
     return create_civ_user(db=db, host_name=client_host)
 
 
+@router.get("/civilian-users/", response_model=List[CivilianUserModel])
+def read_civ_users(
+    skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+):
+    users = get_civ_users(db, skip=skip, limit=limit)
+    return users
+
+
 # ---- Non Civilian Users ----
 @router.post("/users/", response_model=UserResponse)
 def add_user(user: UserCreate, db: SESSION_LOCAL = Depends(get_db)):
@@ -65,7 +76,7 @@ def read_users(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_
 
 
 @router.get("/users/{user_id}", response_model=UserResponse)
-def read_user(user_id: int, db: SESSION_LOCAL = Depends(get_db)):
+def read_user(user_id: str, db: SESSION_LOCAL = Depends(get_db)):
     db_user = get_user_by_id(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -79,17 +90,25 @@ def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(g
     return disasters
 
 
-@router.post("/disasters/", response_model=DisasterResponse)
-def add_disaster(
+@router.post("/disasters-civ/", response_model=DisasterResponse)
+def add_disaster_civ(
     request: Request, disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)
 ):
     client_host = request.client.host
-    disaster_id = get_disaster_by_id(db, id=disaster.disaster_id)
-    if disaster_id:
-        raise HTTPException(
-            status_code=400, detail="Disaster already present in the db"
-        )
-    return add_disaster_to_db(db=db, disaster=disaster, host_name=client_host)
+    return add_disaster_to_db(
+        db=db, disaster=disaster, host_name=client_host, is_civilian=True
+    )
+
+
+@router.post("/disasters-emrg/", response_model=DisasterResponse)
+def add_disaster_emrg(
+    request: Request,
+    disaster: DisasterCreateEmergency,
+    db: SESSION_LOCAL = Depends(get_db),
+):
+    return add_disaster_to_db(
+        db=db, disaster=disaster, host_name=disaster.user_id, is_civilian=False
+    )
 
 
 @router.get("/emergency_services/", response_model=List[EmergencyService])

@@ -37,7 +37,7 @@ def get_civ_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 # ----- User CRUD -----
-def get_user_by_id(db: Session, user_id: int):
+def get_user_by_id(db: Session, user_id: str):
     return db.query(User).filter(User.id == user_id).first()
 
 
@@ -81,15 +81,30 @@ def get_disaster_by_id(db: Session, id: int):
     return db.query(Disaster).filter(Disaster.id == id).first()
 
 
-def add_disaster_to_db(db: Session, disaster: DisasterCreate, host_name: str):
-    new_disaster = Disaster(
-        id=disaster.disaster_id,
-        type=disaster.disaster_type,
-        user_id=host_name,
-        scale=disaster.scale,
-        latitude=disaster.lat,
-        longitude=disaster.long,
-    )
+def add_disaster_to_db(
+    db: Session, disaster: DisasterCreate, host_name: str, is_civilian: bool
+):
+
+    if is_civilian:
+        new_disaster = Disaster(
+            # id=disaster.disaster_id,
+            type=disaster.disaster_type,
+            user_id_civilian=host_name,
+            scale=disaster.scale,
+            latitude=disaster.lat,
+            longitude=disaster.long,
+            user_id_emergency=None,
+        )
+    else:
+        new_disaster = Disaster(
+            # id=disaster.disaster_id,
+            type=disaster.disaster_type,
+            user_id_civilian=None,
+            scale=disaster.scale,
+            latitude=disaster.lat,
+            longitude=disaster.long,
+            user_id_emergency=host_name,
+        )
     db.add(new_disaster)
     db.commit()
     db.refresh(new_disaster)
