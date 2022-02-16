@@ -35,16 +35,9 @@ jobs:
       #     echo PGADMIN_PASSWORD: ""
       #     cat .env
 
-      - uses: actions/checkout@v1
-      - name: Build the docker-compose stack
-        run: |
-          touch .env
-          echo DATABASE_URL: "postgresql+psycopg2://postgres:password@localhost:5432/postgres_db"
-          echo DB_USER: "user"
-          echo DB_PASSWORD: "password"
-          echo DB_NAME: "postgres_db"
-          cat .env
-          docker-compose up db
+      # - uses: actions/checkout@v1
+      # - name: Build the docker-compose stack
+      #   run:
 
       - uses: actions/checkout@v2
       - name: Set up Python ${{matrix.python-version}}
@@ -64,4 +57,13 @@ jobs:
           mypy: true
 
       - name: Unit Testing
-        run: pytest
+        run: |
+          touch .env
+          echo DATABASE_URL: "postgresql+psycopg2://postgres:password@localhost:5432/postgres_db"
+          echo DB_USER: "user"
+          echo DB_PASSWORD: "password"
+          echo DB_NAME: "postgres_db"
+          cat .env
+          docker-compose up db
+          pytest
+          docker-compose down db
