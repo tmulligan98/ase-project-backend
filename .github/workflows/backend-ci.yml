@@ -10,34 +10,41 @@ on:
 jobs:
   test:
     env:
-      TOM_TOM_ACCESS_KEY: ""
+      TOM_TOM_ACCESS_KEY: ${{secrets.TOM_TOM_ACCESS_KEY}}
       DB_USER: ""
       DB_PASSWORD: ""
       DB_NAME: ""
       PGADMIN_EMAIL: ""
       PGADMIN_PASSWORD: ""
-      DATABASE_URL: "postgresql+psycopg2://postgres:password@localhost:5432/postgres_db"
+      DATABASE_URL: ${{secrets.DATABASE_URL}}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.8]
 
     steps:
-      - name: Create env
-        run: |
-          touch .env
-          echo TOM_TOM_ACCESS_KEY=""
-          echo DATABASE_URL: ""
-          echo DB_USER: ""
-          echo DB_PASSWORD: ""
-          echo DB_NAME: ""
-          echo PGADMIN_EMAIL: ""
-          echo PGADMIN_PASSWORD: ""
-          cat .env
+      # - name: Create env
+      #   run: |
+      #     touch .env
+      #     echo TOM_TOM_ACCESS_KEY:""
+      #     echo DATABASE_URL: "postgresql+psycopg2://postgres:password@localhost:5432/postgres_db"
+      #     echo DB_USER: ""
+      #     echo DB_PASSWORD: ""
+      #     echo DB_NAME: ""
+      #     echo PGADMIN_EMAIL: ""
+      #     echo PGADMIN_PASSWORD: ""
+      #     cat .env
 
       - uses: actions/checkout@v1
       - name: Build the docker-compose stack
-        run: docker-compose up db
+        run: |
+          touch ~/home/runner/work/ase-project-backend/ase-project-backend/.env
+          echo DATABASE_URL: "postgresql+psycopg2://postgres:password@localhost:5432/postgres_db"
+          echo DB_USER: ""
+          echo DB_PASSWORD: ""
+          echo DB_NAME: ""
+          cat ~/home/runner/work/ase-project-backend/ase-project-backend/.env
+          docker-compose up db
 
       - uses: actions/checkout@v2
       - name: Set up Python ${{matrix.python-version}}
