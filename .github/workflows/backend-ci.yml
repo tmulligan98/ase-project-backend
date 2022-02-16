@@ -64,6 +64,6 @@ jobs:
           echo DB_PASSWORD: "password"
           echo DB_NAME: "postgres_db"
           cat .env
-          docker-compose up db
+          docker-compose up db &
           pytest
           docker-compose down db
