@@ -11,7 +11,7 @@ jobs:
   test:
     env:
       TOM_TOM_ACCESS_KEY: ${{secrets.TOM_TOM_ACCESS_KEY}}
-      DB_USER: "user"
+      DB_USER: "postgres"
       DB_PASSWORD: "password"
       DB_NAME: "postgres_db"
       PGADMIN_EMAIL: ""
