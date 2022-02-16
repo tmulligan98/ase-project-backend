@@ -40,9 +40,9 @@ jobs:
         run: |
           touch .env
           echo DATABASE_URL: "postgresql+psycopg2://postgres:password@localhost:5432/postgres_db"
-          echo DB_USER: ""
-          echo DB_PASSWORD: ""
-          echo DB_NAME: ""
+          echo DB_USER: "user"
+          echo DB_PASSWORD: "password"
+          echo DB_NAME: "postgres_db"
           cat .env
           docker-compose up db
 
