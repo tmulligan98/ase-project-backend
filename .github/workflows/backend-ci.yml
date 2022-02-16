@@ -65,5 +65,6 @@ jobs:
           echo DB_NAME: "postgres_db"
           cat .env
           docker-compose up db &
+          sleep 30s
           pytest
           docker-compose down db
