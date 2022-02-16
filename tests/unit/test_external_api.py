@@ -1,7 +1,7 @@
 import json
 import unittest
 
-import mock
+import mock  # type: ignore
 
 from backend.external_apis import get_tomtom_traffic_flow
 
