@@ -56,7 +56,8 @@ def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
 
 def add_emergency_services(db: Session, emergencyservice: EmergencyServiceCreate):
     db_user = EmergencyService(
-        name=emergencyservice.name, location=emergencyservice.location
+        emergency_service_type=emergencyservice.emergency_service_type,
+        location=emergencyservice.location,
     )
     db.add(db_user)
     db.commit()

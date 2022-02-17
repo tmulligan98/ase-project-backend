@@ -27,5 +27,5 @@ class EmergencyService(Base):
     __tablename__ = "emergency_services"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), unique=True, index=True)
+    emergency_service_type = Column(String(50), unique=True, index=True)
     location = Column(String(50), index=True)

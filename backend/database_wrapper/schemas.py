@@ -38,7 +38,7 @@ class Disaster(DisasterBase):
 
 
 class EmergencyServiceBase(BaseModel):
-    name: str
+    emergency_service_type: str
     location: str
 
 
