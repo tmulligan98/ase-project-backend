@@ -34,8 +34,8 @@ def get_disasters(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Disaster).offset(skip).limit(limit).all()
 
 
-def get_disaster_by_name(db: Session, name: str):
-    return db.query(Disaster).filter(Disaster.name == name).first()
+def get_disaster_by_name(db: Session, disaster_type: str):
+    return db.query(Disaster).filter(Disaster.disaster_type == disaster_type).first()
 
 
 def add_disaster_to_db(db: Session, disaster: DisasterCreate):
