@@ -2,24 +2,29 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_sqlalchemy import DBSessionMiddleware
 from backend.utils import SETTINGS
-from backend.database_wrapper import Base, ENGINE
-from backend.routers import database_wrapper_router, external_api_router, sample_router
+from backend.database_wrapper import (
+    Base,
+    ENGINE,
+)
+from backend.routers import (
+    database_wrapper_router,
+    external_api_router,
+    sample_router,
+)
+
 from backend.utils import init_logger
 
 
 API_VERSION_PREFIX = "/api/1"
-
+Base.metadata.drop_all(bind=ENGINE)
 Base.metadata.create_all(bind=ENGINE)
-# ENGINE = get_db_engine()
-# BASE = get_db_base()
-# BASE.metadata.create_all(bind=ENGINE)
 
 app = FastAPI()
 
+# This is really useful...
 logger = init_logger()
 
-
-origins = ["http://localhost:3000", "localhost:3000"]
+origins = ["*"]
 
 
 app.add_middleware(
@@ -35,8 +40,18 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+async def start_up():
+    logger.info("Starting up...")
+
+
 @app.get("/")
-def hello_world():
+def hello():
+    """
+    Hello to Server
+    """
+
+    # Return body
     return {
         "disasterStatus": True,
         "disasterLocation": {

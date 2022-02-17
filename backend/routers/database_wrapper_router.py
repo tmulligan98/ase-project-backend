@@ -1,75 +1,142 @@
-from fastapi import APIRouter, Depends, HTTPException
+from backend.database_wrapper.schemas import CivilianUserModel
+from fastapi import APIRouter, Depends, HTTPException, Request
+from backend.emergency_services import EmergencyServiceModel
+
 from backend.database_wrapper import (
-    User,
+    UserResponse,
     UserCreate,
-    Disaster,
+    DisasterResponse,
     EmergencyServiceCreate,
     SESSION_LOCAL,
     create_user,
-    get_user,
+    get_user_by_id,
     get_users,
-    get_user_by_email,
     add_disaster_to_db,
     get_emergency_services_db,
     add_emergency_services,
-    get_db,
     DisasterCreate,
-    EmergencyService,
-    get_disaster_by_name,
+    # get_disaster_by_id,
+    get_disasters_from_db,
+    get_civ_user_by_id,
+    create_civ_user,
+    get_civ_users,
+    DisasterCreateEmergency,
+    add_constant_services,
+    get_emergency_service,
 )
 from typing import List
 
 router = APIRouter()
 
 
-@router.post("/users/", response_model=User)
+def get_db():
+    db = SESSION_LOCAL()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+# ---- Civilian Users ----
+@router.get("/handshake")
+def handshake(request: Request, db: SESSION_LOCAL = Depends(get_db)):
+    """
+    Handshake with server
+    """
+    # Get client host
+    client_host = request.client.host
+
+    # If this host has not been seen before, add as new user
+    civ = get_civ_user_by_id(db, client_host)
+
+    if civ:
+        raise HTTPException(status_code=400, detail="User already registered")
+    return create_civ_user(db=db, host_name=client_host)
+
+
+@router.get("/civilian-users/", response_model=List[CivilianUserModel])
+def read_civ_users(
+    skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+):
+    users = get_civ_users(db, skip=skip, limit=limit)
+    return users
+
+
+# ---- Non Civilian Users ----
+@router.post("/users/", response_model=UserResponse)
 def add_user(user: UserCreate, db: SESSION_LOCAL = Depends(get_db)):
-    db_user = get_user_by_email(db, email=user.email)
+    db_user = get_user_by_id(db, user_id=user.user_id)
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="User already registered")
     return create_user(db=db, user=user)
 
 
-@router.get("/users/", response_model=List[User])
+@router.get("/users/", response_model=List[UserResponse])
 def read_users(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
     users = get_users(db, skip=skip, limit=limit)
     return users
 
 
-@router.get("/users/{user_id}", response_model=User)
-def read_user(user_id: int, db: SESSION_LOCAL = Depends(get_db)):
-    db_user = get_user(db, user_id=user_id)
+@router.get("/users/{user_id}", response_model=UserResponse)
+def read_user(user_id: str, db: SESSION_LOCAL = Depends(get_db)):
+    db_user = get_user_by_id(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
 
-@router.get("/disasters/", response_model=List[Disaster])
+# ---- Disasters ----
+@router.get("/disasters/", response_model=List[DisasterResponse])
 def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
-    disasters = get_disasters(db, skip=skip, limit=limit)
+    disasters = get_disasters_from_db(db, skip=skip, limit=limit)
     return disasters
 
 
-@router.post("/disasters/", response_model=Disaster)
-def add_disaster(disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)):
-    db_user = get_disaster_by_name(db, name=disaster.name)
-    if db_user:
-        raise HTTPException(
-            status_code=400, detail="Disaster already present in the db"
-        )
-    return add_disaster_to_db(db=db, disaster=disaster)
+@router.post("/disasters-civ/", response_model=DisasterResponse)
+def add_disaster_civ(
+    request: Request, disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)
+):
+    client_host = request.client.host
+    return add_disaster_to_db(
+        db=db, disaster=disaster, host_name=client_host, is_civilian=True
+    )
 
 
-@router.get("/emergency_services/", response_model=List[EmergencyService])
+@router.post("/disasters-emrg/", response_model=DisasterResponse)
+def add_disaster_emrg(
+    request: Request,
+    disaster: DisasterCreateEmergency,
+    db: SESSION_LOCAL = Depends(get_db),
+):
+    return add_disaster_to_db(
+        db=db, disaster=disaster, host_name=disaster.user_id, is_civilian=False
+    )
+
+
+# ----- Emergency Services -----
+@router.get("/emergency_services/", response_model=List[EmergencyServiceModel])
 def get_emergency_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
-    ES = get_emergency_services_db(db, skip=skip, limit=limit)
-    return ES
+    res = get_emergency_services_db(db, skip=skip, limit=limit)
+    print(res)
+    return res
 
 
-@router.post("/emergency_services/", response_model=EmergencyService)
+@router.post("/emergency_services/", response_model=EmergencyServiceModel)
 def add_emergency_service(
     emergencyservice: EmergencyServiceCreate, db: SESSION_LOCAL = Depends(get_db)
 ):
     return add_emergency_services(db=db, emergencyservice=emergencyservice)
+
+
+@router.get("/add_all_services/", response_model=str)
+def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
+    """
+    Add constant emergency services
+    """
+    emergency = get_emergency_service(db, id=0)
+    if emergency:
+        raise HTTPException(status_code=400, detail="Services already registered.")
+    add_constant_services(db)
+    return "done"

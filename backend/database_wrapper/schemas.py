@@ -1,17 +1,22 @@
 from pydantic import BaseModel
+from .models import DisasterType
+
+
+class CivilianUserModel(BaseModel):
+    host_name: str
 
 
 class UserBase(BaseModel):
-    email: str
-    name: str
+    user_id: str
 
 
 class UserCreate(UserBase):
     password: str
+    email: str
+    name: str
 
 
-class User(UserBase):
-    id: int
+class UserResponse(UserBase):
     is_active: bool
 
     class Config:
@@ -19,15 +24,24 @@ class User(UserBase):
 
 
 class DisasterBase(BaseModel):
-    name: str
+    lat: float
+    long: float
+    scale: int
+    disaster_type: DisasterType
 
 
 class DisasterCreate(DisasterBase):
+    # user_id: int  # Foreign key to users table
+    # disaster_id: int  # PK
     pass
 
 
-class Disaster(DisasterBase):
-    id: int
+class DisasterCreateEmergency(DisasterBase):
+    user_id: str
+
+
+class DisasterResponse(DisasterBase):
+    pass
 
     class Config:
         orm_mode = True
@@ -42,8 +56,8 @@ class EmergencyServiceCreate(EmergencyServiceBase):
     pass
 
 
-class EmergencyService(EmergencyServiceBase):
-    id: int
+# class EmergencyService(EmergencyServiceBase):
+#     id: int
 
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True

@@ -1,12 +1,11 @@
-import json
 import unittest
-
-import mock  # type: ignore
-
+import json
+from unittest.mock import patch
 from backend.external_apis import get_tomtom_traffic_flow
 
 
 class TestExternalAPI(unittest.TestCase):
+
     # Example responses
     tomtom_example_response = {
         "frc": "FRC3",
@@ -20,16 +19,24 @@ class TestExternalAPI(unittest.TestCase):
         "@version": "blahblah",
     }
 
-    @mock.patch("backend.external_apis.external_apis.requests.get")
+    """Suite of mock tests to ensure we can handle data from our chosen external APIs"""
+
+    # @patch("backend.external_apis.external_apis.requests.get")
+
+    @patch("backend.external_apis.external_apis.requests.get")
     def test_tomtom_traffic_flow(self, mock_get):
+
         # Set up our sample response object
         d = {"flowSegmentData": self.tomtom_example_response}
+
         # Set up the called function to return this object
         instance = mock_get.return_value
         instance.content = json.dumps(d)
+
         # Run the call. This function should return a body of information regarding
         # ... traffic flow on nearby streets
         res = get_tomtom_traffic_flow(lat=123.456, long=123.456, zoom=18)
+
         # Assert that we are extracting information from the api response correctly
         self.assertEqual(res.streets[0].coords_of_street, [(123.456, 123.456)])
         self.assertEqual(res.streets[0].speed, 63)
