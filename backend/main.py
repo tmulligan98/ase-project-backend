@@ -6,7 +6,12 @@ from backend.database_wrapper import (
     Base,
     ENGINE,
 )
-from backend.routers import database_wrapper_router, external_api_router, sample_router
+from backend.routers import (
+    database_wrapper_router,
+    external_api_router,
+    sample_router,
+)
+
 from backend.utils import init_logger
 
 

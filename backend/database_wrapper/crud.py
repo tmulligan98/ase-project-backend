@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-
+from backend.emergency_services import EMERGENCY_SERVICES
+from backend.emergency_services import EmergencyServiceModel
 from .models import User, Disaster, EmergencyService, CivilianUser
 from .schemas import (
     UserCreate,
@@ -117,7 +118,27 @@ def add_disaster_to_db(
 
 
 def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(EmergencyService).offset(skip).limit(limit).all()
+    temp = db.query(EmergencyService).offset(skip).limit(limit).all()
+
+    res = list(
+        map(
+            lambda x: EmergencyServiceModel(
+                name=x.name,
+                type=x.type,
+                lat=x.lat,
+                long=x.long,
+                number_fire_engines=x.number_fire_engines,
+                number_ambulances=x.number_ambulances,
+                number_armed_units=x.number_armed_units,
+                number_squad_car=x.number_squad_car,
+                number_armoured_car=x.number_armoured_car,
+                number_personnel=x.number_personnel,
+            ),
+            temp,
+        )
+    )
+
+    return res
 
 
 def add_emergency_services(db: Session, emergencyservice: EmergencyServiceCreate):
@@ -128,3 +149,32 @@ def add_emergency_services(db: Session, emergencyservice: EmergencyServiceCreate
     db.commit()
     db.refresh(db_user)
     return db_user
+
+
+def get_emergency_service(db: Session, id: int):
+    return db.query(EmergencyService).filter(EmergencyService.id == id).first()
+
+
+def add_constant_services(db: Session):
+    """
+    Utility function to add the list of emergnency services to the database
+    """
+    res = list(
+        map(
+            lambda x: EmergencyService(
+                name=x.name,
+                type=x.type,
+                lat=x.lat,
+                long=x.long,
+                number_fire_engines=x.number_fire_engines,
+                number_ambulances=x.number_ambulances,
+                number_armed_units=x.number_armed_units,
+                number_squad_car=x.number_squad_car,
+                number_armoured_car=x.number_armoured_car,
+                number_personnel=x.number_personnel,
+            ),
+            EMERGENCY_SERVICES,
+        )
+    )
+    db.bulk_save_objects(res)
+    db.commit()

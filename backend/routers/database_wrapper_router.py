@@ -1,5 +1,6 @@
 from backend.database_wrapper.schemas import CivilianUserModel
 from fastapi import APIRouter, Depends, HTTPException, Request
+from backend.emergency_services import EmergencyServiceModel
 
 from backend.database_wrapper import (
     UserResponse,
@@ -14,13 +15,14 @@ from backend.database_wrapper import (
     get_emergency_services_db,
     add_emergency_services,
     DisasterCreate,
-    EmergencyService,
     # get_disaster_by_id,
     get_disasters_from_db,
     get_civ_user_by_id,
     create_civ_user,
     get_civ_users,
     DisasterCreateEmergency,
+    add_constant_services,
+    get_emergency_service,
 )
 from typing import List
 
@@ -111,16 +113,30 @@ def add_disaster_emrg(
     )
 
 
-@router.get("/emergency_services/", response_model=List[EmergencyService])
+# ----- Emergency Services -----
+@router.get("/emergency_services/", response_model=List[EmergencyServiceModel])
 def get_emergency_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
-    ES = get_emergency_services_db(db, skip=skip, limit=limit)
-    return ES
+    res = get_emergency_services_db(db, skip=skip, limit=limit)
+    print(res)
+    return res
 
 
-@router.post("/emergency_services/", response_model=EmergencyService)
+@router.post("/emergency_services/", response_model=EmergencyServiceModel)
 def add_emergency_service(
     emergencyservice: EmergencyServiceCreate, db: SESSION_LOCAL = Depends(get_db)
 ):
     return add_emergency_services(db=db, emergencyservice=emergencyservice)
+
+
+@router.get("/add_all_services/", response_model=str)
+def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
+    """
+    Add constant emergency services
+    """
+    emergency = get_emergency_service(db, id=0)
+    if emergency:
+        raise HTTPException(status_code=400, detail="Services already registered.")
+    add_constant_services(db)
+    return "done"

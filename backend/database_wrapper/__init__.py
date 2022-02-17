@@ -5,7 +5,6 @@ from .schemas import (
     DisasterResponse,
     EmergencyServiceCreate,
     DisasterCreate,
-    EmergencyService,
     CivilianUserModel,
     DisasterCreateEmergency,
 )
@@ -23,6 +22,8 @@ from .crud import (
     get_civ_user_by_id,
     create_civ_user,
     get_civ_users,
+    add_constant_services,
+    get_emergency_service,
 )
 
 
@@ -50,4 +51,6 @@ ___all__ = [
     "get_civ_user_by_id",
     "create_civ_user",
     "get_civ_users",
+    "add_constant_services",
+    "get_emergency_service",
 ]

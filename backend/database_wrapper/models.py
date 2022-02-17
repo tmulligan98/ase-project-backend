@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Enum
 from enum import Enum as PyEnum
 from .database import Base
+from backend.emergency_services import ServiceType
 
 
 class DisasterType(PyEnum):
@@ -50,6 +51,14 @@ class Disaster(Base):
 class EmergencyService(Base):
     __tablename__ = "emergency_services"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(50), unique=True, index=True)
-    location = Column(String(50), index=True)
+    type = Column(Enum(ServiceType), index=True)
+    lat = Column(Float)
+    long = Column(Float)
+    number_fire_engines = Column(Integer)
+    number_ambulances = Column(Integer)
+    number_armed_units = Column(Integer)
+    number_squad_car = Column(Integer)
+    number_armoured_car = Column(Integer)
+    number_personnel = Column(Integer)
