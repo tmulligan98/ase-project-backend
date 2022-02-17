@@ -19,7 +19,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 def create_user(db: Session, user: UserCreate):
     fake_hashed_password = user.password + "notreallyhashed"
     db_user = User(
-        email=user.email, name=user.name, hashed_password=fake_hashed_password
+        email=user.email, name=user.name, disaster_id=user.disaster_id, hashed_password=fake_hashed_password
     )
     db.add(db_user)
     db.commit()
@@ -36,7 +36,7 @@ def get_disaster_by_name(db: Session, name: str):
 
 
 def add_disaster_to_db(db: Session, disaster: DisasterCreate):
-    db_user = Disaster(name=disaster.name)
+    db_user = Disaster(name=disaster.name, latitude=disaster.latitude, longitude=disaster.longitude)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

@@ -8,6 +8,7 @@ from backend.database_wrapper import (
     create_user,
     get_user,
     get_users,
+    get_disasters,
     get_user_by_email,
     add_disaster_to_db,
     get_emergency_services_db,
@@ -44,10 +45,10 @@ def read_user(user_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return db_user
 
 
-@router.get("/disasters/", response_model=List[Disaster])
-def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
-    disasters = get_disasters(db, skip=skip, limit=limit)
-    return disasters
+# @router.get("/disasters/", response_model=List[Disaster])
+# def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
+#     disasters = get_disasters(db, skip=skip, limit=limit)
+#     return disasters
 
 
 @router.post("/disasters/", response_model=Disaster)
@@ -59,6 +60,11 @@ def add_disaster(disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)):
         )
     return add_disaster_to_db(db=db, disaster=disaster)
 
+
+@router.get("/disasters/", response_model=List[Disaster])
+def retrieve_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
+    x = get_disasters(db, skip=skip, limit=limit)
+    return x
 
 @router.get("/emergency_services/", response_model=List[EmergencyService])
 def get_emergency_services(
