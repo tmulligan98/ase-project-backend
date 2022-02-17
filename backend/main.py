@@ -19,7 +19,7 @@ app = FastAPI()
 # This is really useful...
 logger = init_logger()
 
-origins = ["http://localhost:3000", "localhost:3000"]
+origins = ["*"]
 
 
 app.add_middleware(
