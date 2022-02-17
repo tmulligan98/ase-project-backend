@@ -18,7 +18,7 @@ class Disaster(Base):
     __tablename__ = "disasters"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), unique=True, index=True)
+    disaster_type = Column(String(50), unique=True, index=True)
     latitude = Column(String(10), unique=True, index=True)
     longitude = Column(String(10), unique=True, index=True)
 

@@ -21,7 +21,7 @@ class User(UserBase):
 
 
 class DisasterBase(BaseModel):
-    name: str
+    disaster_type: str
     latitude: str
     longitude: str
 
