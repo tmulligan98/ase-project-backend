@@ -45,15 +45,9 @@ def read_user(user_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return db_user
 
 
-# @router.get("/disasters/", response_model=List[Disaster])
-# def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
-#     disasters = get_disasters(db, skip=skip, limit=limit)
-#     return disasters
-
-
 @router.post("/disasters/", response_model=Disaster)
 def add_disaster(disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)):
-    db_user = get_disaster_by_name(db, name=disaster.name)
+    db_user = get_disaster_by_name(db, disaster_type=disaster.disaster_type)
     if db_user:
         raise HTTPException(
             status_code=400, detail="Disaster already present in the db"
@@ -62,9 +56,12 @@ def add_disaster(disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)):
 
 
 @router.get("/disasters/", response_model=List[Disaster])
-def retrieve_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
+def retrieve_disasters(
+    skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+):
     x = get_disasters(db, skip=skip, limit=limit)
     return x
+
 
 @router.get("/emergency_services/", response_model=List[EmergencyService])
 def get_emergency_services(
