@@ -28,6 +28,7 @@ class DisasterBase(BaseModel):
     long: float
     scale: int
     disaster_type: DisasterType
+    radius: int
 
 
 class DisasterCreate(DisasterBase):
