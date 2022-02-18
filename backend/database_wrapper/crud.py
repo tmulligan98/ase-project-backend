@@ -64,6 +64,9 @@ def create_user(db: Session, user: UserCreate):
     return UserResponse(user_id=user.user_id, is_active=True)
 
 
+# ----- Disasters -----
+
+
 def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
     temp = db.query(Disaster).offset(skip).limit(limit).all()
     res = map(
@@ -95,6 +98,7 @@ def add_disaster_to_db(
             latitude=disaster.lat,
             longitude=disaster.long,
             user_id_emergency=None,
+            radius=disaster.radius,
         )
     else:
         new_disaster = Disaster(
@@ -105,6 +109,7 @@ def add_disaster_to_db(
             latitude=disaster.lat,
             longitude=disaster.long,
             user_id_emergency=host_name,
+            radius=disaster.radius,
         )
     db.add(new_disaster)
     db.commit()
@@ -114,7 +119,11 @@ def add_disaster_to_db(
         scale=disaster.scale,
         lat=disaster.lat,
         long=disaster.long,
+        radius=disaster.radius,
     )
+
+
+# ----- Emergency Services -----
 
 
 def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):

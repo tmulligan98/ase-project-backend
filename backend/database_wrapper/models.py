@@ -46,6 +46,7 @@ class Disaster(Base):
     scale = Column(Integer, unique=False, index=True)
     latitude = Column(Float, unique=False)
     longitude = Column(Float, unique=False)
+    radius = Column(Integer, unique=False)
 
 
 class EmergencyService(Base):

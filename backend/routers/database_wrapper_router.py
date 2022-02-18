@@ -119,7 +119,6 @@ def get_emergency_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
     res = get_emergency_services_db(db, skip=skip, limit=limit)
-    print(res)
     return res
 
 
