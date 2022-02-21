@@ -2,6 +2,7 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Enum
 from enum import Enum as PyEnum
 from .database import Base
 from backend.emergency_services import ServiceType
+from sqlalchemy.orm import relationship
 
 
 class DisasterType(PyEnum):
@@ -47,6 +48,7 @@ class Disaster(Base):
     latitude = Column(Float, unique=False)
     longitude = Column(Float, unique=False)
     radius = Column(Integer, unique=False)
+    route = relationship("Route", back_populates="disaster")
 
 
 class EmergencyService(Base):
@@ -63,3 +65,14 @@ class EmergencyService(Base):
     number_squad_car = Column(Integer)
     number_armoured_car = Column(Integer)
     number_personnel = Column(Integer)
+
+
+# composite id made from disaster id and individual in sequence id
+class Route(Base):
+    __tablename__ = "routes"
+
+    disaster_id = Column(Integer, ForeignKey(Disaster.id), primary_key=True, index=True)
+    waypoint_order = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    lat = Column(Float)
+    long = Column(Float)
+    disaster = relationship("Disaster", back_populates="route")
