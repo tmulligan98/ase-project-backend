@@ -4,17 +4,21 @@ from sqlalchemy.orm import Session
 from backend.database_wrapper import get_db
 from datetime import timedelta
 
-from fastapi.security import OAuth2PasswordRequestForm
-
+from pydantic import BaseModel
 from backend.utils import SETTINGS
 
 router = APIRouter()
 
 
+class AuthModel(BaseModel):
+    username: str
+    password: str
+
+
 @router.post("/token", response_model=Token)
 async def login_for_access_token(
+    form_data: AuthModel,
     db: Session = Depends(get_db),
-    form_data: OAuth2PasswordRequestForm = Depends(),
 ):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
