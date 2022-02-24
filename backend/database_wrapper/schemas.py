@@ -62,3 +62,14 @@ class EmergencyServiceCreate(EmergencyServiceBase):
 
 #     class Config:
 #         orm_mode = True
+
+
+class RouteCreate(BaseModel):
+    disaster_id: int
+    type: int
+
+
+class WaypointCreate(BaseModel):
+    sequence: int
+    lat: float
+    long: float

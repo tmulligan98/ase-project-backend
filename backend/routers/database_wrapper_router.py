@@ -1,4 +1,6 @@
-from backend.database_wrapper.schemas import CivilianUserModel
+from backend.database_wrapper.crud import add_route
+from backend.database_wrapper.models import Route
+from backend.database_wrapper.schemas import CivilianUserModel, RouteCreate
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services import EmergencyServiceModel
 
@@ -139,3 +141,19 @@ def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Services already registered.")
     add_constant_services(db)
     return "done"
+
+
+# ----- Routes -----
+
+
+@router.post("/routes/", response_model=str)
+def add_routes(route: RouteCreate, db: SESSION_LOCAL = Depends(get_db)):
+    return add_route(db=db, route=route)
+
+
+# @router.get("/emergency_services/", response_model=List[EmergencyServiceModel])
+# def get_emergency_services(
+#     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+# ):
+#     res = get_emergency_services_db(db, skip=skip, limit=limit)
+#     return res

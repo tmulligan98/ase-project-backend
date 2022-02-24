@@ -1,14 +1,18 @@
+from requests import session
+from sqlalchemy import null
 from sqlalchemy.orm import Session
 from backend.emergency_services import EMERGENCY_SERVICES
 from backend.emergency_services import EmergencyServiceModel
-from .models import User, Disaster, EmergencyService, CivilianUser
+from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypoint
 from .schemas import (
+    RouteCreate,
     UserCreate,
     DisasterCreate,
     EmergencyServiceCreate,
     UserResponse,
     DisasterResponse,
     CivilianUserModel,
+    RouteCreate,
 )
 
 
@@ -187,3 +191,29 @@ def add_constant_services(db: Session):
     )
     db.bulk_save_objects(res)
     db.commit()
+
+
+# ----- Routes -----
+
+
+def add_route(db: Session, route: RouteCreate):
+    route = Route(disaster_id=route.disaster_id, type=route.disaster_id)
+    db.add(route)
+    db.commit()
+    db.refresh(route)
+    return
+
+
+# get all route ids for a disaster
+def get_disaster_route_ids(
+    db: Session, disaster_id: int, skip: int = 0, limit: int = 100
+):
+    temp = db.query(Route).offset(skip).limit(limit).all()
+    res = map(
+        lambda x: Route(id=x.id),
+        temp,
+    )
+    return list(res)
+
+
+# def get_route_waypoint_ids():#return ordered array/list of waypoints

@@ -76,8 +76,11 @@ docker-compose --env-file ./.env up --build
 - It will take some time to load it up
 - After you can see the backend app starting on 0.0.0.0:8000/
 and to validate if the instance is connected to database, run:-
-docker exec -it mysql_db bash,
-and you will be entered in a mysql shell.
+docker exec -it postgresql_db bash,
+and you will be entered in a postgresql shell.
+
+docker-compose down --volumes 
+to reset
 
 
 ## Running Tests and Code Quality

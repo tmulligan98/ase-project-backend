@@ -48,7 +48,7 @@ class Disaster(Base):
     latitude = Column(Float, unique=False)
     longitude = Column(Float, unique=False)
     radius = Column(Integer, unique=False)
-    route = relationship("Route", back_populates="disaster")
+    # routes = relationship("Route", back_populates="disasters")
 
 
 class EmergencyService(Base):
@@ -67,12 +67,21 @@ class EmergencyService(Base):
     number_personnel = Column(Integer)
 
 
-# composite id made from disaster id and individual in sequence id
 class Route(Base):
     __tablename__ = "routes"
 
-    disaster_id = Column(Integer, ForeignKey(Disaster.id), primary_key=True, index=True)
-    waypoint_order = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    disaster_id = Column(Integer, ForeignKey("disasters.id"))
+    # disaster = relationship("Disasters", back_populates="routes")
+    type = Column(Integer)
+
+
+class Waypoint(Base):
+    __tablename__ = "waypoints"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    route_id = Column(Integer, ForeignKey("routes.id"))
+    # route = relationship("Routes", back_populates="waypoints")
+    sequence = Column(Integer)
     lat = Column(Float)
     long = Column(Float)
-    disaster = relationship("Disaster", back_populates="route")
