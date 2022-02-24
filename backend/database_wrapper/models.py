@@ -10,6 +10,10 @@ class DisasterType(PyEnum):
     FLOOD = 1
     ROAD_INCIDENT = 2
     PUBLIC_DISTRURBANCE = 3
+    BIO_HAZARD = 4
+    METEOR = 5
+    STORM = 6
+    OTHER = 7
 
 
 class CivilianUser(Base):

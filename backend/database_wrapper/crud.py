@@ -79,6 +79,7 @@ def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
             scale=x.scale,
             lat=x.latitude,
             long=x.longitude,
+            radius=x.radius,
         ),
         temp,
     )
