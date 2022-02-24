@@ -34,8 +34,9 @@ def get_nearest_services():
 
     for disaster in disasters:
         all_services = {}
-        nearest_services = {}
-
+        first_nearest_services = {}
+        second_nearest_services = {}
+        third_nearest_services = {}
         es_of_consideration = []
 
         if disaster["disaster_type"] == 0:  # fire
@@ -57,14 +58,28 @@ def get_nearest_services():
                     )
                 all_services[es] = x
 
-            # print(all_services)
+            print(f"all services ==> {all_services}")
 
             for es_name, distances in all_services.items():
                 for name, distance in distances.items():
-                    if distance == min(list(distances.values())):
-                        nearest_services[es_name] = {name: distance}
+                    if distance == sorted(list(distances.values()))[0]:
+                        # print(min(list(distances.values())))
+                        # print(sorted(list(distances.values()))[0])
+                        first_nearest_services[es_name] = {name: distance}
 
-            print(f"we want ==>{nearest_services}")
+            for es_name, distances in all_services.items():
+                for name, distance in distances.items():
+                    if distance == sorted(list(distances.values()))[1]:
+                        second_nearest_services[es_name] = {name: distance}
+
+            for es_name, distances in all_services.items():
+                for name, distance in distances.items():
+                    if distance == sorted(list(distances.values()))[2]:
+                        third_nearest_services[es_name] = {name: distance}
+
+            print(f"first nearest ==>{first_nearest_services}")
+            print(f"second nearest ==>{second_nearest_services}")
+            print(f"third nearest ==>{third_nearest_services}")
 
 
 get_nearest_services()
