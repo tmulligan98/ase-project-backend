@@ -63,17 +63,9 @@ def get_nearest_services():
             for es_name, distances in all_services.items():
                 for name, distance in distances.items():
                     if distance == sorted(list(distances.values()))[0]:
-                        # print(min(list(distances.values())))
-                        # print(sorted(list(distances.values()))[0])
                         first_nearest_services[es_name] = {name: distance}
-
-            for es_name, distances in all_services.items():
-                for name, distance in distances.items():
                     if distance == sorted(list(distances.values()))[1]:
                         second_nearest_services[es_name] = {name: distance}
-
-            for es_name, distances in all_services.items():
-                for name, distance in distances.items():
                     if distance == sorted(list(distances.values()))[2]:
                         third_nearest_services[es_name] = {name: distance}
 
