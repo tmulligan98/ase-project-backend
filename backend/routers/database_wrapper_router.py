@@ -1,6 +1,7 @@
 from backend.database_wrapper.schemas import CivilianUserModel
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services import EmergencyServiceModel
+from backend.database_wrapper import get_db
 
 from backend.database_wrapper import (
     UserResponse,
@@ -27,14 +28,6 @@ from backend.database_wrapper import (
 from typing import List
 
 router = APIRouter()
-
-
-def get_db():
-    db = SESSION_LOCAL()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 # ---- Civilian Users ----

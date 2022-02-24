@@ -10,6 +10,7 @@ from backend.routers import (
     database_wrapper_router,
     external_api_router,
     sample_router,
+    authentication_router,
 )
 
 from backend.utils import init_logger
@@ -69,6 +70,7 @@ async def health_check():
 app.include_router(sample_router.router, prefix=API_VERSION_PREFIX)
 app.include_router(external_api_router.router, prefix=API_VERSION_PREFIX)
 app.include_router(database_wrapper_router.router, prefix=API_VERSION_PREFIX)
+app.include_router(authentication_router.router, prefix=API_VERSION_PREFIX)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
-from .database import ENGINE, Base, SESSION_LOCAL
+from .database import ENGINE, Base, SESSION_LOCAL, get_db
+from .models import User
 from .schemas import (
     UserResponse,
     UserCreate,
@@ -28,6 +29,8 @@ from .crud import (
 
 
 ___all__ = [
+    "get_db",
+    "User",
     "DisasterCreateEmergency",
     "get_civ_users",
     "SESSION_LOCAL",
