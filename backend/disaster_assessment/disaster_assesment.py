@@ -2,7 +2,7 @@ import haversine as hs
 
 
 def get_nearest_services(disasters, emergency_services):
-    # data_to_return = {}
+    data_to_return = {}
 
     # disasters = requests.get(
     #     "https://ase-backend-2.herokuapp.com/api/1/disasters/?skip=0&limit=100"
@@ -38,8 +38,9 @@ def get_nearest_services(disasters, emergency_services):
         "ambulance": es_ambulance,
         "garda": es_garda,
     }
-
+    disaster_id = 0
     for disaster in disasters:
+        disaster_id += 1
         all_services = {}
         first_nearest_services = {}
         second_nearest_services = {}
@@ -87,4 +88,11 @@ def get_nearest_services(disasters, emergency_services):
             print(f"first nearest ==>{first_nearest_services}")
             print(f"second nearest ==>{second_nearest_services}")
             print(f"third nearest ==>{third_nearest_services}")
-            # call a post request to add first, second  and third to database
+
+            data_to_return[disaster_id] = {
+                "first nearest": first_nearest_services,
+                "second nearest": second_nearest_services,
+                "third nearest": third_nearest_services,
+            }
+
+    return data_to_return
