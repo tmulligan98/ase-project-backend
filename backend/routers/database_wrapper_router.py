@@ -24,7 +24,7 @@ from backend.database_wrapper import (
     add_constant_services,
     get_emergency_service,
 )
-from typing import List
+from typing import List, Union
 
 router = APIRouter()
 
@@ -139,3 +139,17 @@ def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Services already registered.")
     add_constant_services(db)
     return "done"
+
+
+# testing disaster assesment logic
+@router.get(
+    "/get_nearest_services/",
+    response_model=Union[DisasterResponse, EmergencyServiceModel],
+)
+def get_nearest_services(
+    skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+):
+    emergency_res = get_emergency_services_db(db, skip=skip, limit=limit)
+    disasters_res = get_disasters_from_db(db, skip=skip, limit=limit)
+    data = get_nearest_services(disasters_res, emergency_res)
+    return data

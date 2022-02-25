@@ -1,18 +1,25 @@
-# import requests
-import requests
 import haversine as hs
 
 
-def get_nearest_services():
+def get_nearest_services(disasters, emergency_services):
     # data_to_return = {}
-    disasters = requests.get(
-        "https://ase-backend-2.herokuapp.com/api/1/disasters/?skip=0&limit=100"
-    ).json()
-    emergency_services = requests.get(
-        "https://ase-backend-2.herokuapp.com/api/1/emergency_services/?skip=0&limit=100"
-    ).json()
+
+    # disasters = requests.get(
+    #     "https://ase-backend-2.herokuapp.com/api/1/disasters/?skip=0&limit=100"
+    # ).json()
+    # emergency_services = requests.get(
+    #     "https://ase-backend-2.herokuapp.com/api/1/emergency_services/?skip=0&limit=100"
+    # ).json()
 
     # es_distances_from_disaster = []  # type: List[List]
+
+    # x = requests.post("https://ase-backend-2.herokuapp.com/api/1/disasters-civ/", json={
+    #   "lat": 23,
+    #   "long": 23.5,
+    #   "scale": 6,
+    #   "disaster_type": 1,
+    #   "radius": 10,
+    # })
 
     es_garda = []
     es_fire_brigade = []
@@ -47,6 +54,14 @@ def get_nearest_services():
             es_of_consideration = ["ambulance", "garda"]
         if disaster["disaster_type"] == 3:  # public_disturbance
             es_of_consideration = ["fire_brigade", "ambulance", "garda"]
+        if disaster["disaster_type"] == 4:  # bio_hazard
+            es_of_consideration = ["fire_brigade", "ambulance", "garda"]
+        if disaster["disaster_type"] == 5:  # meteor
+            es_of_consideration = ["fire_brigade", "ambulance", "garda"]
+        if disaster["disaster_type"] == 6:  # storm
+            es_of_consideration = ["fire_brigade", "ambulance", "garda"]
+        if disaster["disaster_type"] == 7:  # other
+            es_of_consideration = ["fire_brigade", "ambulance", "garda"]
 
         if es_of_consideration:
             for es in es_of_consideration:  # type: ignore
@@ -72,6 +87,4 @@ def get_nearest_services():
             print(f"first nearest ==>{first_nearest_services}")
             print(f"second nearest ==>{second_nearest_services}")
             print(f"third nearest ==>{third_nearest_services}")
-
-
-get_nearest_services()
+            # call a post request to add first, second  and third to database
