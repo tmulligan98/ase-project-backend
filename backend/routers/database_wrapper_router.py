@@ -1,7 +1,7 @@
 from backend.database_wrapper.schemas import CivilianUserModel
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services import EmergencyServiceModel
-
+from backend.disaster_assessment.disaster_assesment import get_nearest_services
 from backend.database_wrapper import (
     UserResponse,
     UserCreate,
@@ -146,7 +146,7 @@ def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
     "/get_nearest_services/",
     response_model=Union[DisasterResponse, EmergencyServiceModel],
 )
-def get_nearest_services(
+def nearest_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
     emergency_res = get_emergency_services_db(db, skip=skip, limit=limit)
