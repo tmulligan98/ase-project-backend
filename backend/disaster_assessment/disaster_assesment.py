@@ -1,28 +1,8 @@
 import haversine as hs
 
-import json
-
 
 def get_nearest_services(disasters, emergency_services):
     data_to_return = {}
-
-    # disasters = requests.get(
-    #     "https://ase-backend-2.herokuapp.com/api/1/disasters/?skip=0&limit=100"
-    # ).json()
-    # emergency_services = requests.get(
-    #     "https://ase-backend-2.herokuapp.com/api/1/emergency_services/?skip=0&limit=100"
-    # ).json()
-
-    # es_distances_from_disaster = []  # type: List[List]
-
-    # x = requests.post("https://ase-backend-2.herokuapp.com/api/1/disasters-civ/", json={
-    #   "lat": 23,
-    #   "long": 23.5,
-    #   "scale": 6,
-    #   "disaster_type": 1,
-    #   "radius": 10,
-    # })
-
     es_garda = []
     es_fire_brigade = []
     es_ambulance = []
@@ -121,10 +101,5 @@ def get_nearest_services(disasters, emergency_services):
                 "second nearest": second_nearest_services,
                 "third nearest": third_nearest_services,
             }
-
-    json_object = json.dumps(data_to_return, indent=4)
-
-    with open("return.json", "w") as outfile:
-        outfile.write(json_object)
 
     return data_to_return
