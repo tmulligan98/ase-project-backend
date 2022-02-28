@@ -1,6 +1,10 @@
 from backend.database_wrapper.crud import add_route
 from backend.database_wrapper.models import Route
-from backend.database_wrapper.schemas import CivilianUserModel, RouteCreate
+from backend.database_wrapper.schemas import (
+    CivilianUserModel,
+    DisasterBase,
+    RouteCreate,
+)
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services import EmergencyServiceModel
 
@@ -94,7 +98,7 @@ def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(g
     return disasters
 
 
-@router.post("/disasters-civ/", response_model=DisasterResponse)
+@router.post("/disasters-civ/", response_model=DisasterBase)
 def add_disaster_civ(
     request: Request, disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)
 ):

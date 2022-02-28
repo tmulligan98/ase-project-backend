@@ -5,6 +5,7 @@ from backend.emergency_services import EMERGENCY_SERVICES
 from backend.emergency_services import EmergencyServiceModel
 from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypoint
 from .schemas import (
+    DisasterBase,
     RouteCreate,
     UserCreate,
     DisasterCreate,
@@ -75,6 +76,7 @@ def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
     temp = db.query(Disaster).offset(skip).limit(limit).all()
     res = map(
         lambda x: DisasterResponse(
+            id=x.id,
             disaster_type=x.type,
             scale=x.scale,
             lat=x.latitude,
@@ -119,7 +121,7 @@ def add_disaster_to_db(
     db.add(new_disaster)
     db.commit()
     db.refresh(new_disaster)
-    return DisasterResponse(
+    return DisasterBase(
         disaster_type=disaster.disaster_type,
         scale=disaster.scale,
         lat=disaster.lat,

@@ -42,7 +42,7 @@ class DisasterCreateEmergency(DisasterBase):
 
 
 class DisasterResponse(DisasterBase):
-    pass
+    id: str
 
     class Config:
         orm_mode = True
