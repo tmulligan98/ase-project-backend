@@ -24,7 +24,8 @@ from backend.database_wrapper import (
     add_constant_services,
     get_emergency_service,
 )
-from typing import List, Union
+from typing import List
+import json
 
 router = APIRouter()
 
@@ -144,12 +145,19 @@ def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
 # testing disaster assesment logic
 @router.get(
     "/get_nearest_services/",
-    response_model=Union[DisasterResponse, EmergencyServiceModel],
 )
 def nearest_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
     emergency_res = get_emergency_services_db(db, skip=skip, limit=limit)
     disasters_res = get_disasters_from_db(db, skip=skip, limit=limit)
-    data = get_nearest_services(disasters_res, emergency_res)
-    return data
+
+    ers = []
+    for er in emergency_res:
+        ers.append(json.loads(er.json()))
+
+    drs = []
+    for dr in disasters_res:
+        drs.append(json.loads(dr.json()))
+
+    return get_nearest_services(drs, ers)
