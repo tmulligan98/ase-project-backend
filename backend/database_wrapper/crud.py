@@ -6,14 +6,15 @@ from backend.emergency_services import EmergencyServiceModel
 from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypoint
 from .schemas import (
     DisasterBase,
+    RouteBase,
     RouteCreate,
+    RouteResponse,
     UserCreate,
     DisasterCreate,
     EmergencyServiceCreate,
     UserResponse,
     DisasterResponse,
     CivilianUserModel,
-    RouteCreate,
 )
 
 
@@ -208,15 +209,15 @@ def add_route(db: Session, route: RouteCreate):
 
 
 # get all route ids for a disaster
-def get_disaster_route_ids(
-    db: Session, disaster_id: int, skip: int = 0, limit: int = 100
-):
-    temp = db.query(Route).offset(skip).limit(limit).all()
+def get_disaster_route_ids(db: Session, disaster_id: int):
+    temp = db.query(Route).filter(Disaster.id == disaster_id).all()
     res = map(
-        lambda x: Route(id=x.id),
+        lambda x: RouteResponse(id=x.id, disaster_id=x.disaster_id, type=x.type),
         temp,
     )
     return list(res)
 
 
+# def get_civ_user_by_id(db: Session, user_id: int):
+#     return db.query(CivilianUser).filter(CivilianUser.id == user_id).first()
 # def get_route_waypoint_ids():#return ordered array/list of waypoints

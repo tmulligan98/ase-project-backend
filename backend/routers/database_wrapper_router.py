@@ -1,9 +1,11 @@
-from backend.database_wrapper.crud import add_route
+from backend.database_wrapper.crud import add_route, get_disaster_route_ids
 from backend.database_wrapper.models import Route
 from backend.database_wrapper.schemas import (
     CivilianUserModel,
     DisasterBase,
+    RouteBase,
     RouteCreate,
+    RouteResponse,
 )
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services import EmergencyServiceModel
@@ -155,9 +157,9 @@ def add_routes(route: RouteCreate, db: SESSION_LOCAL = Depends(get_db)):
     return add_route(db=db, route=route)
 
 
-# @router.get("/emergency_services/", response_model=List[EmergencyServiceModel])
-# def get_emergency_services(
-#     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
-# ):
-#     res = get_emergency_services_db(db, skip=skip, limit=limit)
-#     return res
+@router.get("/routes/{disaster_id}", response_model=List[RouteResponse])
+def get_routes(disaster_id: int, db: SESSION_LOCAL = Depends(get_db)):
+    res = get_disaster_route_ids(db, disaster_id)
+    if res is None:
+        raise HTTPException(status_code=404, detail="Disaster not found")
+    return res

@@ -64,9 +64,17 @@ class EmergencyServiceCreate(EmergencyServiceBase):
 #         orm_mode = True
 
 
-class RouteCreate(BaseModel):
+class RouteBase(BaseModel):
     disaster_id: int
     type: int
+
+
+class RouteCreate(RouteBase):
+    pass
+
+
+class RouteResponse(RouteBase):
+    id: int
 
 
 class WaypointCreate(BaseModel):
