@@ -1,13 +1,14 @@
-from fastapi import APIRouter, status, Depends, HTTPException
+from fastapi import APIRouter, status, Depends, HTTPException, Form
 from backend.authentication import Token, create_access_token, authenticate_user
 from sqlalchemy.orm import Session
 from backend.database_wrapper import get_db
 from datetime import timedelta
 
 from pydantic import BaseModel
-from backend.utils import SETTINGS
+from backend.utils import SETTINGS, init_logger
 
 router = APIRouter()
+logger = init_logger()
 
 
 class AuthModel(BaseModel):
@@ -15,12 +16,13 @@ class AuthModel(BaseModel):
     password: str
 
 
-@router.post("/token", response_model=Token)
-async def login_for_access_token(
-    form_data: AuthModel,
+@router.post("/login", response_model=Token)
+def login_for_access_token(
+    username: str = Form(str),
+    password: str = Form(str),
     db: Session = Depends(get_db),
 ):
-    user = authenticate_user(db, form_data.username, form_data.password)
+    user = authenticate_user(db, username, password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -31,4 +33,7 @@ async def login_for_access_token(
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires  # type: ignore
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+
+    logger.info("Generated token...")
+
+    return Token(**{"access_token": access_token, "token_type": "bearer"})

@@ -25,7 +25,7 @@ app = FastAPI()
 # This is really useful...
 logger = init_logger()
 
-origins = ["*"]
+origins = ["http://localhost:3000", "http://localhost:8080", "http://localhost"]
 
 
 app.add_middleware(
@@ -34,6 +34,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 app.add_middleware(
     DBSessionMiddleware,
