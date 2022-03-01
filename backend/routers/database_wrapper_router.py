@@ -1,7 +1,7 @@
 from backend.database_wrapper.schemas import CivilianUserModel
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services import EmergencyServiceModel
-
+from backend.disaster_assessment.disaster_assesment import get_nearest_services
 from backend.database_wrapper import (
     UserResponse,
     UserCreate,
@@ -25,6 +25,7 @@ from backend.database_wrapper import (
     get_emergency_service,
 )
 from typing import List
+import json
 
 router = APIRouter()
 
@@ -139,3 +140,24 @@ def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Services already registered.")
     add_constant_services(db)
     return "done"
+
+
+# testing disaster assesment logic
+@router.get(
+    "/get_nearest_services/",
+)
+def nearest_services(
+    skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+):
+    emergency_res = get_emergency_services_db(db, skip=skip, limit=limit)
+    disasters_res = get_disasters_from_db(db, skip=skip, limit=limit)
+
+    ers = []
+    for er in emergency_res:
+        ers.append(json.loads(er.json()))
+
+    drs = []
+    for dr in disasters_res:
+        drs.append(json.loads(dr.json()))
+
+    return get_nearest_services(drs, ers)
