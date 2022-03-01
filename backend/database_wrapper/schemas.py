@@ -77,7 +77,16 @@ class RouteResponse(RouteBase):
     id: int
 
 
-class WaypointCreate(BaseModel):
+class WaypointBase(BaseModel):
+    route_id: int
     sequence: int
     lat: float
-    long: float
+    lng: float
+
+
+class WaypointCreate(WaypointBase):
+    pass
+
+
+class WaypointResponse(WaypointBase):
+    pass

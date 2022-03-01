@@ -1,4 +1,9 @@
-from backend.database_wrapper.crud import add_route, get_disaster_route_ids
+from backend.database_wrapper.crud import (
+    add_route,
+    add_route_waypoint,
+    get_disaster_route_ids,
+    get_route_waypoints,
+)
 from backend.database_wrapper.models import Route
 from backend.database_wrapper.schemas import (
     CivilianUserModel,
@@ -6,6 +11,8 @@ from backend.database_wrapper.schemas import (
     RouteBase,
     RouteCreate,
     RouteResponse,
+    WaypointCreate,
+    WaypointResponse,
 )
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services import EmergencyServiceModel
@@ -162,4 +169,17 @@ def get_routes(disaster_id: int, db: SESSION_LOCAL = Depends(get_db)):
     res = get_disaster_route_ids(db, disaster_id)
     if res is None:
         raise HTTPException(status_code=404, detail="Disaster not found")
+    return res
+
+
+@router.post("/routes/waypoints/", response_model=str)
+def add_waypoint(waypoint: WaypointCreate, db: SESSION_LOCAL = Depends(get_db)):
+    return add_route_waypoint(db=db, waypoint=waypoint)
+
+
+@router.get("/routes/waypoints/{route_id}", response_model=List[WaypointResponse])
+def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
+    res = get_route_waypoints(db, route_id)
+    if res is None:
+        raise HTTPException(status_code=404, detail="No Waypoints found")
     return res

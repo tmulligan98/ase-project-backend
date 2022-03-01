@@ -1,5 +1,3 @@
-from requests import session
-from sqlalchemy import null
 from sqlalchemy.orm import Session
 from backend.emergency_services import EMERGENCY_SERVICES
 from backend.emergency_services import EmergencyServiceModel
@@ -15,6 +13,8 @@ from .schemas import (
     UserResponse,
     DisasterResponse,
     CivilianUserModel,
+    WaypointCreate,
+    WaypointResponse,
 )
 
 
@@ -205,7 +205,7 @@ def add_route(db: Session, route: RouteCreate):
     db.add(route)
     db.commit()
     db.refresh(route)
-    return
+    return route
 
 
 # get all route ids for a disaster
@@ -218,6 +218,23 @@ def get_disaster_route_ids(db: Session, disaster_id: int):
     return list(res)
 
 
-# def get_civ_user_by_id(db: Session, user_id: int):
-#     return db.query(CivilianUser).filter(CivilianUser.id == user_id).first()
-# def get_route_waypoint_ids():#return ordered array/list of waypoints
+def add_route_waypoint(db: Session, waypoint: WaypointCreate):
+    waypoint = Waypoint(
+        route_id=waypoint.route_id,
+        sequence=waypoint.sequence,
+        lat=waypoint.lat,
+        lng=waypoint.lng,
+    )
+    db.add(waypoint)
+    db.commit()
+    db.refresh(waypoint)
+    return waypoint
+
+
+def get_route_waypoints(db: Session, route_id: int):
+    temp = db.query(Waypoint).filter(Route.id == route_id).all()
+    res = map(
+        lambda x: WaypointResponse(id=x.id, route_id=x.route_id, lat=x.lat, lng=x.lng),
+        temp,
+    )
+    return list(res)

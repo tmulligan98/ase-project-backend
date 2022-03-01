@@ -88,4 +88,4 @@ class Waypoint(Base):
     # route = relationship("Routes", back_populates="waypoints")
     sequence = Column(Integer)
     lat = Column(Float)
-    long = Column(Float)
+    lng = Column(Float)
