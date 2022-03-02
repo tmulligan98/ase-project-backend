@@ -155,7 +155,6 @@ def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
     return "done"
 
 
-
 # ----- Routes -----
 
 
@@ -183,7 +182,8 @@ def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
     if res is None:
         raise HTTPException(status_code=404, detail="No Waypoints found")
     return res
-  
+
+
 # testing disaster assesment logic
 @router.get(
     "/get_nearest_services/",
