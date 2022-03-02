@@ -96,10 +96,40 @@ def get_nearest_services(disasters, emergency_services):
                             }
                         }
 
-            data_to_return[disaster_id] = {
-                "first nearest": first_nearest_services,
-                "second nearest": second_nearest_services,
-                "third nearest": third_nearest_services,
+            ambulances = []
+            garda = []
+            fire_brigade = []
+            for service, info in first_nearest_services.items():
+                for name, details in info.items():
+                    if service == "ambulance":
+                        ambulances.append({**{"name": name}, **details})
+                    if service == "garda":
+                        garda.append({**{"name": name}, **details})
+                    if service == "fire_brigade":
+                        fire_brigade.append({**{"name": name}, **details})
+
+            for service, info in second_nearest_services.items():
+                for name, details in info.items():
+                    if service == "ambulance":
+                        ambulances.append({**{"name": name}, **details})
+                    if service == "garda":
+                        garda.append({**{"name": name}, **details})
+                    if service == "fire_brigade":
+                        fire_brigade.append({**{"name": name}, **details})
+
+            for service, info in third_nearest_services.items():
+                for name, details in info.items():
+                    if service == "ambulance":
+                        ambulances.append({**{"name": name}, **details})
+                    if service == "garda":
+                        garda.append({**{"name": name}, **details})
+                    if service == "fire_brigade":
+                        fire_brigade.append({**{"name": name}, **details})
+
+            data_to_return[disaster["id"]] = {
+                "ambulance": ambulances,
+                "police": garda,
+                "fire_brigade": fire_brigade,
             }
 
     return data_to_return
