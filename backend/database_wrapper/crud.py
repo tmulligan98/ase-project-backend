@@ -1,14 +1,19 @@
 from sqlalchemy.orm import Session
 from backend.emergency_services import EMERGENCY_SERVICES
 from backend.emergency_services import EmergencyServiceModel
-from .models import User, Disaster, EmergencyService, CivilianUser
+from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypoint
 from .schemas import (
+    DisasterBase,
+    RouteCreate,
+    RouteResponse,
     UserCreate,
     DisasterCreate,
     EmergencyServiceCreate,
     UserResponse,
     DisasterResponse,
     CivilianUserModel,
+    WaypointCreate,
+    WaypointResponse,
 )
 
 
@@ -71,6 +76,7 @@ def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
     temp = db.query(Disaster).offset(skip).limit(limit).all()
     res = map(
         lambda x: DisasterResponse(
+            id=x.id,
             disaster_type=x.type,
             scale=x.scale,
             lat=x.latitude,
@@ -115,7 +121,7 @@ def add_disaster_to_db(
     db.add(new_disaster)
     db.commit()
     db.refresh(new_disaster)
-    return DisasterResponse(
+    return DisasterBase(
         disaster_type=disaster.disaster_type,
         scale=disaster.scale,
         lat=disaster.lat,
@@ -188,3 +194,48 @@ def add_constant_services(db: Session):
     )
     db.bulk_save_objects(res)
     db.commit()
+
+
+# ----- Routes -----
+
+
+def add_route(db: Session, route: RouteCreate):
+    route = Route(disaster_id=route.disaster_id, type=route.disaster_id)
+    db.add(route)
+    db.commit()
+    db.refresh(route)
+    return route.id
+
+
+# get all route ids for a disaster
+def get_disaster_route_ids(db: Session, disaster_id: int):
+    temp = db.query(Route).filter(Disaster.id == disaster_id).all()
+    res = map(
+        lambda x: RouteResponse(id=x.id, disaster_id=x.disaster_id, type=x.type),
+        temp,
+    )
+    return list(res)
+
+
+def add_route_waypoint(db: Session, waypoint: WaypointCreate):
+    waypoint = Waypoint(
+        route_id=waypoint.route_id,
+        sequence=waypoint.sequence,
+        lat=waypoint.lat,
+        lng=waypoint.lng,
+    )
+    db.add(waypoint)
+    db.commit()
+    db.refresh(waypoint)
+    return
+
+
+def get_route_waypoints(db: Session, route_id: int):
+    temp = db.query(Waypoint).filter(Route.id == route_id).all()
+    res = map(
+        lambda x: WaypointResponse(
+            route_id=x.route_id, sequence=x.sequence, lat=x.lat, lng=x.lng
+        ),
+        temp,
+    )
+    return list(res)
