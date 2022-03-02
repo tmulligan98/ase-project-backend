@@ -4,7 +4,6 @@ from backend.emergency_services import EmergencyServiceModel
 from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypoint
 from .schemas import (
     DisasterBase,
-    RouteBase,
     RouteCreate,
     RouteResponse,
     UserCreate,
@@ -205,7 +204,7 @@ def add_route(db: Session, route: RouteCreate):
     db.add(route)
     db.commit()
     db.refresh(route)
-    return route
+    return route.id
 
 
 # get all route ids for a disaster
@@ -228,13 +227,15 @@ def add_route_waypoint(db: Session, waypoint: WaypointCreate):
     db.add(waypoint)
     db.commit()
     db.refresh(waypoint)
-    return waypoint
+    return
 
 
 def get_route_waypoints(db: Session, route_id: int):
     temp = db.query(Waypoint).filter(Route.id == route_id).all()
     res = map(
-        lambda x: WaypointResponse(id=x.id, route_id=x.route_id, lat=x.lat, lng=x.lng),
+        lambda x: WaypointResponse(
+            route_id=x.route_id, sequence=x.sequence, lat=x.lat, lng=x.lng
+        ),
         temp,
     )
     return list(res)

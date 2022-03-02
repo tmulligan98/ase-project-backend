@@ -2,7 +2,6 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Enum
 from enum import Enum as PyEnum
 from .database import Base
 from backend.emergency_services import ServiceType
-from sqlalchemy.orm import relationship
 
 
 class DisasterType(PyEnum):

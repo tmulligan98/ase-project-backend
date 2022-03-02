@@ -79,7 +79,7 @@ and to validate if the instance is connected to database, run:-
 docker exec -it postgresql_db bash,
 and you will be entered in a postgresql shell.
 
-docker-compose down --volumes 
+docker-compose down --volumes
 to reset
 
 

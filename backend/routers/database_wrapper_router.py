@@ -4,11 +4,9 @@ from backend.database_wrapper.crud import (
     get_disaster_route_ids,
     get_route_waypoints,
 )
-from backend.database_wrapper.models import Route
 from backend.database_wrapper.schemas import (
     CivilianUserModel,
     DisasterBase,
-    RouteBase,
     RouteCreate,
     RouteResponse,
     WaypointCreate,
