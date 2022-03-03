@@ -145,7 +145,7 @@ def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
                 long=x.long,
                 units=x.units,
                 units_available=x.units_available,
-                units_busy=x.units_busy
+                units_busy=x.units_busy,
             ),
             temp,
         )
@@ -181,7 +181,7 @@ def add_constant_services(db: Session):
                 long=x.long,
                 units=x.units,
                 units_available=x.units_available,
-                units_busy=x.units_busy
+                units_busy=x.units_busy,
             ),
             EMERGENCY_SERVICES,
         )
