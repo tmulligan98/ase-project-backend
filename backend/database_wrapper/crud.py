@@ -143,12 +143,9 @@ def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
                 type=x.type,
                 lat=x.lat,
                 long=x.long,
-                number_fire_engines=x.number_fire_engines,
-                number_ambulances=x.number_ambulances,
-                number_armed_units=x.number_armed_units,
-                number_squad_car=x.number_squad_car,
-                number_armoured_car=x.number_armoured_car,
-                number_personnel=x.number_personnel,
+                units=x.units,
+                units_available=x.units_available,
+                units_busy=x.units_busy
             ),
             temp,
         )
@@ -182,12 +179,9 @@ def add_constant_services(db: Session):
                 type=x.type,
                 lat=x.lat,
                 long=x.long,
-                number_fire_engines=x.number_fire_engines,
-                number_ambulances=x.number_ambulances,
-                number_armed_units=x.number_armed_units,
-                number_squad_car=x.number_squad_car,
-                number_armoured_car=x.number_armoured_car,
-                number_personnel=x.number_personnel,
+                units=x.units,
+                units_available=x.units_available,
+                units_busy=x.units_busy
             ),
             EMERGENCY_SERVICES,
         )

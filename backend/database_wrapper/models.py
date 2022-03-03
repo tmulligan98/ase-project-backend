@@ -62,12 +62,9 @@ class EmergencyService(Base):
     type = Column(Enum(ServiceType), index=True)
     lat = Column(Float)
     long = Column(Float)
-    number_fire_engines = Column(Integer)
-    number_ambulances = Column(Integer)
-    number_armed_units = Column(Integer)
-    number_squad_car = Column(Integer)
-    number_armoured_car = Column(Integer)
-    number_personnel = Column(Integer)
+    units = Column(Integer)
+    units_available = Column(Integer)
+    units_busy = Column(Integer)
 
 
 class Route(Base):
