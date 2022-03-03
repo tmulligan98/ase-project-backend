@@ -121,143 +121,55 @@ def get_nearest_services(disasters, emergency_services):
             allocated_firebrigade_station = []
             allocated_garda_station = []
 
-            for service, info in first_nearest_services.items():
-                for name, details in info.items():
-                    if service == "ambulance" and details["units available"] != 0:
-                        if details["units available"] >= no_services_needed:
-                            allocated_ambulance_station.append(
-                                {
-                                    "name": name,
-                                    "distance": details["distance"],
-                                    "lat": details["lat"],
-                                    "long": details["long"],
-                                }
-                            )
-                    if service == "garda" and details["units available"] != 0:
-                        if details["units available"] >= no_services_needed:
-                            allocated_garda_station.append(
-                                {
-                                    "name": name,
-                                    "distance": details["distance"],
-                                    "lat": details["lat"],
-                                    "long": details["long"],
-                                }
-                            )
+            for x in [
+                first_nearest_services,
+                second_nearest_services,
+                third_nearest_services,
+            ]:
+                if (
+                    not allocated_firebrigade_station
+                    or not allocated_ambulance_station
+                    or not allocated_garda_station
+                ):
+                    for service, info in x.items():
+                        for name, details in info.items():
+                            if (
+                                service == "ambulance"
+                                and details["units available"] != 0
+                            ):
+                                if details["units available"] >= no_services_needed:
+                                    allocated_ambulance_station.append(
+                                        {
+                                            "name": name,
+                                            "distance": details["distance"],
+                                            "lat": details["lat"],
+                                            "long": details["long"],
+                                        }
+                                    )
+                            if service == "garda" and details["units available"] != 0:
+                                if details["units available"] >= no_services_needed:
+                                    allocated_garda_station.append(
+                                        {
+                                            "name": name,
+                                            "distance": details["distance"],
+                                            "lat": details["lat"],
+                                            "long": details["long"],
+                                        }
+                                    )
 
-                    if service == "fire_brigade" and details["units available"] != 0:
-                        if details["units available"] >= no_services_needed:
-                            allocated_firebrigade_station.append(
-                                {
-                                    "name": name,
-                                    "distance": details["distance"],
-                                    "lat": details["lat"],
-                                    "long": details["long"],
-                                }
-                            )
-
-            if (
-                not allocated_firebrigade_station
-                or not allocated_ambulance_station
-                or not allocated_garda_station
-            ):
-                for service, info in second_nearest_services.items():
-                    for name, details in info.items():
-                        if (
-                            service == "ambulance"
-                            and details["units available"] != 0
-                            and not allocated_ambulance_station
-                        ):
-                            if details["units available"] >= no_services_needed:
-                                allocated_ambulance_station.append(
-                                    {
-                                        "name": name,
-                                        "distance": details["distance"],
-                                        "lat": details["lat"],
-                                        "long": details["long"],
-                                    }
-                                )
-
-                        if (
-                            service == "garda"
-                            and details["units available"] != 0
-                            and not allocated_garda_station
-                        ):
-                            if details["units available"] >= no_services_needed:
-                                allocated_garda_station.append(
-                                    {
-                                        "name": name,
-                                        "distance": details["distance"],
-                                        "lat": details["lat"],
-                                        "long": details["long"],
-                                    }
-                                )
-
-                        if (
-                            service == "fire_brigade"
-                            and details["units available"] != 0
-                            and not allocated_firebrigade_station
-                        ):
-                            if details["units available"] >= no_services_needed:
-                                allocated_firebrigade_station.append(
-                                    {
-                                        "name": name,
-                                        "distance": details["distance"],
-                                        "lat": details["lat"],
-                                        "long": details["long"],
-                                    }
-                                )
-
-            if (
-                not allocated_firebrigade_station
-                or not allocated_ambulance_station
-                or not allocated_garda_station
-            ):
-                for service, info in third_nearest_services.items():
-                    for name, details in info.items():
-                        if (
-                            service == "ambulance"
-                            and details["units available"] != 0
-                            and not allocated_ambulance_station
-                        ):
-                            if details["units available"] >= no_services_needed:
-                                allocated_ambulance_station.append(
-                                    {
-                                        "name": name,
-                                        "distance": details["distance"],
-                                        "lat": details["lat"],
-                                        "long": details["long"],
-                                    }
-                                )
-
-                        if (
-                            service == "garda"
-                            and details["units available"] != 0
-                            and not allocated_garda_station
-                        ):
-                            if details["units available"] >= no_services_needed:
-                                allocated_garda_station.append(
-                                    {
-                                        "name": name,
-                                        "distance": details["distance"],
-                                        "lat": details["lat"],
-                                        "long": details["long"],
-                                    }
-                                )
-
-                        if (
-                            service == "fire_brigade"
-                            and details["units available"] != 0
-                            and not allocated_firebrigade_station
-                        ):
-                            if details["units available"] >= no_services_needed:
-                                allocated_firebrigade_station.append(
-                                    {
-                                        "name": name,
-                                        "distance": details["distance"],
-                                        "lat": details["lat"],
-                                        "long": details["long"],
-                                    }
-                                )
+                            if (
+                                service == "fire_brigade"
+                                and details["units available"] != 0
+                            ):
+                                if details["units available"] >= no_services_needed:
+                                    allocated_firebrigade_station.append(
+                                        {
+                                            "name": name,
+                                            "distance": details["distance"],
+                                            "lat": details["lat"],
+                                            "long": details["long"],
+                                        }
+                                    )
 
             data_to_return[disaster["id"]] = {
                 "ambulance": allocated_ambulance_station,
