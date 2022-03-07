@@ -1,8 +1,21 @@
-from backend.database_wrapper.schemas import CivilianUserModel
+from backend.database_wrapper.crud import (
+    add_route,
+    add_route_waypoint,
+    get_disaster_route_ids,
+    get_route_waypoints,
+)
+from backend.database_wrapper.schemas import (
+    CivilianUserModel,
+    DisasterBase,
+    RouteCreate,
+    RouteResponse,
+    WaypointCreate,
+    WaypointResponse,
+)
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services import EmergencyServiceModel
 from backend.database_wrapper import get_db
-
+from backend.disaster_assessment import get_nearest_services
 from backend.database_wrapper import (
     UserResponse,
     UserCreate,
@@ -26,6 +39,7 @@ from backend.database_wrapper import (
     get_emergency_service,
 )
 from typing import List
+import json
 
 router = APIRouter()
 
@@ -85,7 +99,7 @@ def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(g
     return disasters
 
 
-@router.post("/disasters-civ/", response_model=DisasterResponse)
+@router.post("/disasters-civ/", response_model=DisasterBase)
 def add_disaster_civ(
     request: Request, disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)
 ):
@@ -132,3 +146,53 @@ def add_all_services(db: SESSION_LOCAL = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Services already registered.")
     add_constant_services(db)
     return "done"
+
+
+# ----- Routes -----
+
+
+@router.post("/routes/", response_model=str)
+def add_routes(route: RouteCreate, db: SESSION_LOCAL = Depends(get_db)):
+    return add_route(db=db, route=route)
+
+
+@router.get("/routes/{disaster_id}", response_model=List[RouteResponse])
+def get_routes(disaster_id: int, db: SESSION_LOCAL = Depends(get_db)):
+    res = get_disaster_route_ids(db, disaster_id)
+    if res is None:
+        raise HTTPException(status_code=404, detail="Disaster not found")
+    return res
+
+
+@router.post("/routes/waypoints/", response_model=str)
+def add_waypoint(waypoint: WaypointCreate, db: SESSION_LOCAL = Depends(get_db)):
+    return add_route_waypoint(db=db, waypoint=waypoint)
+
+
+@router.get("/routes/waypoints/{route_id}", response_model=List[WaypointResponse])
+def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
+    res = get_route_waypoints(db, route_id)
+    if res is None:
+        raise HTTPException(status_code=404, detail="No Waypoints found")
+    return res
+
+
+# testing disaster assesment logic
+@router.get(
+    "/get_nearest_services/",
+)
+def nearest_services(
+    skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+):
+    emergency_res = get_emergency_services_db(db, skip=skip, limit=limit)
+    disasters_res = get_disasters_from_db(db, skip=skip, limit=limit)
+
+    ers = []
+    for er in emergency_res:
+        ers.append(json.loads(er.json()))
+
+    drs = []
+    for dr in disasters_res:
+        drs.append(json.loads(dr.json()))
+
+    return get_nearest_services(drs, ers)

@@ -9,6 +9,10 @@ class DisasterType(PyEnum):
     FLOOD = 1
     ROAD_INCIDENT = 2
     PUBLIC_DISTRURBANCE = 3
+    BIO_HAZARD = 4
+    METEOR = 5
+    STORM = 6
+    OTHER = 7
 
 
 class CivilianUser(Base):
@@ -47,6 +51,7 @@ class Disaster(Base):
     latitude = Column(Float, unique=False)
     longitude = Column(Float, unique=False)
     radius = Column(Integer, unique=False)
+    # routes = relationship("Route", back_populates="disasters")
 
 
 class EmergencyService(Base):
@@ -63,3 +68,23 @@ class EmergencyService(Base):
     number_squad_car = Column(Integer)
     number_armoured_car = Column(Integer)
     number_personnel = Column(Integer)
+
+
+class Route(Base):
+    __tablename__ = "routes"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    disaster_id = Column(Integer, ForeignKey("disasters.id"))
+    # disaster = relationship("Disasters", back_populates="routes")
+    type = Column(Integer)
+
+
+class Waypoint(Base):
+    __tablename__ = "waypoints"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    route_id = Column(Integer, ForeignKey("routes.id"))
+    # route = relationship("Routes", back_populates="waypoints")
+    sequence = Column(Integer)
+    lat = Column(Float)
+    lng = Column(Float)
