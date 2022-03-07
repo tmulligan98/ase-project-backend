@@ -146,6 +146,7 @@ def get_nearest_services(disasters, emergency_services):
                                             "long": details["long"],
                                         }
                                     )
+                                    # update database entries
                             if service == "garda" and details["units available"] != 0:
                                 if details["units available"] >= no_services_needed:
                                     allocated_garda_station.append(
@@ -156,6 +157,7 @@ def get_nearest_services(disasters, emergency_services):
                                             "long": details["long"],
                                         }
                                     )
+                                    # update database entries
 
                             if (
                                 service == "fire_brigade"
@@ -170,6 +172,7 @@ def get_nearest_services(disasters, emergency_services):
                                             "long": details["long"],
                                         }
                                     )
+                                    # update database entries
 
             data_to_return[disaster["id"]] = {
                 "ambulance": allocated_ambulance_station,

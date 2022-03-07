@@ -85,3 +85,21 @@ class Waypoint(Base):
     sequence = Column(Integer)
     lat = Column(Float)
     lng = Column(Float)
+
+
+class KeepTrack(Base):
+    __tablename__ = "keeptrack"
+    disaster_id = Column(
+        String,
+        ForeignKey(Disaster.id),
+        unique=False,
+        index=True,
+    )
+    es_id = Column(
+        String,
+        ForeignKey(EmergencyService.id),
+        unique=False,
+        index=True,
+    )
+
+    units_busy = Column(Integer)

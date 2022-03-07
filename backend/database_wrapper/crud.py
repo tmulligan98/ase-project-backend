@@ -1,7 +1,15 @@
 from sqlalchemy.orm import Session
 from backend.emergency_services import EMERGENCY_SERVICES
 from backend.emergency_services import EmergencyServiceModel
-from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypoint
+from .models import (
+    User,
+    Disaster,
+    EmergencyService,
+    CivilianUser,
+    Route,
+    Waypoint,
+    KeepTrack,
+)
 from .schemas import (
     DisasterBase,
     RouteCreate,
@@ -14,6 +22,7 @@ from .schemas import (
     CivilianUserModel,
     WaypointCreate,
     WaypointResponse,
+    KeepTrackCreate,
 )
 
 
@@ -95,7 +104,6 @@ def get_disaster_by_id(db: Session, id: int):
 def add_disaster_to_db(
     db: Session, disaster: DisasterCreate, host_name: str, is_civilian: bool
 ):
-
     if is_civilian:
         new_disaster = Disaster(
             # id=disaster.disaster_id,
@@ -233,3 +241,17 @@ def get_route_waypoints(db: Session, route_id: int):
         temp,
     )
     return list(res)
+
+
+def add_track_to_db(db: Session, track: KeepTrackCreate):
+    new_track = KeepTrack(
+        disaster_id=track.disaster_id, es_id=track.es_id, units_busy=track.units_busy
+    )
+    db.add(new_track)
+    db.commit()
+    db.refresh(new_track)
+    return
+
+
+def get_tracks(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(KeepTrack).offset(skip).limit(limit).all()

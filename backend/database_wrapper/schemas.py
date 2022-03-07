@@ -90,3 +90,17 @@ class WaypointCreate(WaypointBase):
 
 class WaypointResponse(WaypointBase):
     pass
+
+
+class KeepTrackBase(BaseModel):
+    disaster_id: int
+    es_id: int
+    units_busy: int
+
+
+class KeepTrackCreate(KeepTrackBase):
+    pass
+
+
+class KeepTrackResponse(KeepTrackBase):
+    pass
