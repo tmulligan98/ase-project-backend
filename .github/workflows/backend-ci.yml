@@ -12,7 +12,7 @@ jobs:
     env:
       TOM_TOM_ACCESS_KEY: ${{secrets.TOM_TOM_ACCESS_KEY}}
       AUTH_SECRET_KEY: ${{secrets.AUTH_SECRET_KEY}}
-      CRYPTO_ALGORIHTM: ${{secrets.CRYPTO_ALGORITHM}}
+      CRYPTO_ALGORITHM: ${{secrets.CRYPTO_ALGORITHM}}
       DB_USER: "postgres"
       DB_PASSWORD: "password"
       DB_NAME: "postgres_db"
