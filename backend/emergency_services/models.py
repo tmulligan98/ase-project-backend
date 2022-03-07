@@ -9,7 +9,6 @@ class ServiceType(Enum):
 
 
 class EmergencyServiceModel(BaseModel):
-    id: int
     name: str
     type: ServiceType
     lat: float
