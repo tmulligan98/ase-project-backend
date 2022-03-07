@@ -1,12 +1,12 @@
 from datetime import timedelta, datetime
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from backend.database_wrapper import get_user_by_email, User
 from typing import Optional
-from backend.database_wrapper import get_db
+from backend.database_wrapper import SESSION_LOCAL
 from .models import TokenData
-from backend.utils import SETTINGS, verify_password, oauth2_scheme
+from backend.utils import SETTINGS, verify_password
 from typing import Union
 
 
@@ -62,9 +62,7 @@ def authenticate_user(db: Session, email: str, password: str) -> Union[User, boo
     return user
 
 
-def get_current_user(
-    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
-) -> User:
+def get_current_user(token: str, db: SESSION_LOCAL) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -80,7 +78,9 @@ def get_current_user(
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user_by_email(db, email=token_data.username)  # Username = email for now
+    user = get_user_by_email(
+        db=db, email=token_data.username
+    )  # Username = email for now
     if user is None:
         raise credentials_exception
     return user

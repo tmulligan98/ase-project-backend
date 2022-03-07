@@ -1,5 +1,10 @@
-from fastapi import APIRouter, status, Depends, HTTPException, Form
-from backend.authentication import Token, create_access_token, authenticate_user
+from fastapi import APIRouter, status, Depends, HTTPException, Response
+from backend.authentication import (
+    Token,
+    create_access_token,
+    authenticate_user,
+    get_current_user,
+)
 from sqlalchemy.orm import Session
 from backend.database_wrapper import get_db
 from datetime import timedelta
@@ -16,14 +21,15 @@ class AuthModel(BaseModel):
     password: str
 
 
-@router.post("/login", response_model=Token)
-def login_for_access_token(
-    username: str = Form(str),
-    password: str = Form(str),
+@router.post("/login", response_model=dict)
+async def login_for_access_token(
+    body: AuthModel,
+    response: Response,
     db: Session = Depends(get_db),
 ):
-    user = authenticate_user(db, username, password)
+    user = authenticate_user(db, body.username, body.password)
     if not user:
+        response.status_code = status.HTTP_401_UNAUTHORIZED
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -36,4 +42,11 @@ def login_for_access_token(
 
     logger.info("Generated token...")
 
-    return Token(**{"access_token": access_token, "token_type": "bearer"})
+    # access_token = "123445656"
+
+    return {"token": access_token}
+
+
+@router.post("/users/me")
+async def read_users_me(token: Token, db: Session = Depends(get_db)):
+    return get_current_user(token.access_token, db=db)
