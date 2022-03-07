@@ -89,17 +89,16 @@ class Waypoint(Base):
 
 class KeepTrack(Base):
     __tablename__ = "keeptrack"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     disaster_id = Column(
         String,
         ForeignKey(Disaster.id),
         unique=False,
-        index=True,
     )
     es_id = Column(
         String,
         ForeignKey(EmergencyService.id),
         unique=False,
-        index=True,
     )
 
     units_busy = Column(Integer)
