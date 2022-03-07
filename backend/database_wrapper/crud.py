@@ -147,6 +147,7 @@ def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
     res = list(
         map(
             lambda x: EmergencyServiceModel(
+                id=x.id,
                 name=x.name,
                 type=x.type,
                 lat=x.lat,
