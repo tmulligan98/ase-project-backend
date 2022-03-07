@@ -91,14 +91,12 @@ class KeepTrack(Base):
     __tablename__ = "keeptrack"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     disaster_id = Column(
-        String,
+        Integer,
         ForeignKey(Disaster.id),
-        unique=False,
     )
     es_id = Column(
-        String,
+        Integer,
         ForeignKey(EmergencyService.id),
-        unique=False,
     )
 
     units_busy = Column(Integer)
