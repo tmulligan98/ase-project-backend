@@ -13,7 +13,10 @@ from backend.database_wrapper.schemas import (
     WaypointResponse,
 )
 from fastapi import APIRouter, Depends, HTTPException, Request
-from backend.emergency_services import EmergencyServiceModel
+from backend.emergency_services.models import (
+    EmergencyServiceModel,
+    EmergencyServiceResponse,
+)
 from backend.database_wrapper import get_db
 from backend.disaster_assessment import get_nearest_services
 from backend.database_wrapper import (
@@ -121,7 +124,7 @@ def add_disaster_emrg(
 
 
 # ----- Emergency Services -----
-@router.get("/emergency_services/", response_model=List[EmergencyServiceModel])
+@router.get("/emergency_services/", response_model=List[EmergencyServiceResponse])
 def get_emergency_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):

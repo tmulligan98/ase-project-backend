@@ -19,3 +19,7 @@ class EmergencyServiceModel(BaseModel):
     number_squad_car: int
     number_armoured_car: int
     number_personnel: int
+
+
+class EmergencyServiceResponse(EmergencyServiceModel):
+    id: int
