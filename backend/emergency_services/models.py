@@ -16,3 +16,7 @@ class EmergencyServiceModel(BaseModel):
     units: int
     units_available: int
     units_busy: int
+
+
+class EmergencyServiceResponse(EmergencyServiceModel):
+    id: int

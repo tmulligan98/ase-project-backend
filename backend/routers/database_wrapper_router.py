@@ -16,7 +16,10 @@ from backend.database_wrapper.schemas import (
     KeepTrackCreate,
 )
 from fastapi import APIRouter, Depends, HTTPException, Request
-from backend.emergency_services import EmergencyServiceModel
+from backend.emergency_services.models import (
+    EmergencyServiceModel,
+    EmergencyServiceResponse,
+)
 from backend.disaster_assessment.disaster_assesment import get_nearest_services
 from backend.database_wrapper import (
     UserResponse,
@@ -131,7 +134,7 @@ def add_disaster_emrg(
 
 
 # ----- Emergency Services -----
-@router.get("/emergency_services/", response_model=List[EmergencyServiceModel])
+@router.get("/emergency_services/", response_model=List[EmergencyServiceResponse])
 def get_emergency_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
