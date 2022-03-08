@@ -21,6 +21,7 @@ from backend.emergency_services.models import (
     EmergencyServiceResponse,
 )
 from backend.disaster_assessment.disaster_assesment import get_nearest_services
+from backend.database_wrapper import get_db
 from backend.database_wrapper import (
     UserResponse,
     UserCreate,
@@ -47,14 +48,6 @@ from typing import List
 import json
 
 router = APIRouter()
-
-
-def get_db():
-    db = SESSION_LOCAL()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 # ---- Civilian Users ----

@@ -146,7 +146,8 @@ def get_nearest_services(disasters, emergency_services):
                                             "long": details["long"],
                                         }
                                     )
-                                    # update database entries
+                                    # update es table
+                                    # add entry to keep track table
                             if service == "garda" and details["units available"] != 0:
                                 if details["units available"] >= no_services_needed:
                                     allocated_garda_station.append(

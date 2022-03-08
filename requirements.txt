@@ -32,3 +32,5 @@ python-dotenv==0.19.2
 psycopg2-binary==2.9.3
 FastAPI-SQLAlchemy==0.2.1
 haversine==2.5.1
+passlib==1.7.4
+python-jose==3.3.0

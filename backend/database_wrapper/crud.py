@@ -10,6 +10,7 @@ from .models import (
     Waypoint,
     KeepTrack,
 )
+from backend.utils import get_password_hash
 from .schemas import (
     DisasterBase,
     RouteCreate,
@@ -65,11 +66,10 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
     new_user = User(
         email=user.email,
         name=user.name,
-        hashed_password=fake_hashed_password,
+        hashed_password=get_password_hash(user.password),
         id=user.user_id,
     )
     db.add(new_user)
