@@ -23,3 +23,6 @@ class EmergencyServiceModel(BaseModel):
 
 class EmergencyServiceResponse(EmergencyServiceModel):
     id: int
+
+    class Config:
+        orm_mode = True
