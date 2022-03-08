@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from backend.emergency_services import EMERGENCY_SERVICES
-from backend.emergency_services import EmergencyServiceModel
+from backend.emergency_services.models import (
+    EmergencyServiceResponse,
+)
 from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypoint
 from backend.utils import get_password_hash
 from .schemas import (
@@ -138,7 +140,8 @@ def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
 
     res = list(
         map(
-            lambda x: EmergencyServiceModel(
+            lambda x: EmergencyServiceResponse(
+                id=x.id,
                 name=x.name,
                 type=x.type,
                 lat=x.lat,
