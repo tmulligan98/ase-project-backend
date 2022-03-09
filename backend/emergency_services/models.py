@@ -28,6 +28,3 @@ class EmergencyServiceResponse(EmergencyServiceModel):
 class EmergencyServiceUpdate(BaseModel):
     es_id: int
     units_allocated: int
-
-    class Config:
-        orm_mode = True
