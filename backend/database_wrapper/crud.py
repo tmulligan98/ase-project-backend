@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from backend.emergency_services import EMERGENCY_SERVICES
-from backend.emergency_services.models import EmergencyServiceResponse
+from backend.emergency_services.models import (
+    EmergencyServiceResponse,
+    EmergencyServiceUpdate,
+)
 from .models import (
     User,
     Disaster,
@@ -259,12 +262,13 @@ def get_tracks(db: Session, skip: int = 0, limit: int = 100):
     return db.query(KeepTrack).offset(skip).limit(limit).all()
 
 
-def update_es_db(es_id, units_allocated, db: Session):
-    db.query(EmergencyService).filter(EmergencyService.id == es_id).update(
+def update_es_db(request: EmergencyServiceUpdate, db: Session):
+    db.query(EmergencyService).filter(EmergencyService.id == request.es_id).update(
         {
-            EmergencyService.units_busy: EmergencyService.units_busy + units_allocated,
+            EmergencyService.units_busy: EmergencyService.units_busy
+            + request.units_allocated,
             EmergencyService.units_available: EmergencyService.units_available
-            - units_allocated,
+            - request.units_allocated,
         },
         synchronize_session=False,
     )

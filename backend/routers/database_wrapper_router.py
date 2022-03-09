@@ -19,8 +19,8 @@ from backend.database_wrapper.schemas import (
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services.models import (
     EmergencyServiceModel,
-    # EmergencyServiceUpdate,
-    # EmergencyServiceResponse,
+    EmergencyServiceUpdate,
+    EmergencyServiceResponse,
 )
 from backend.disaster_assessment.disaster_assesment import get_nearest_services
 from backend.database_wrapper import get_db
@@ -129,7 +129,7 @@ def add_disaster_emrg(
 
 
 # ----- Emergency Services -----
-@router.get("/emergency_services/", response_model=List[EmergencyServiceModel])
+@router.get("/emergency_services/", response_model=List[EmergencyServiceResponse])
 def get_emergency_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
@@ -185,9 +185,9 @@ def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return res
 
 
-@router.put("/update_emergency_service/{es_id}/{units_allocated}")
-def update_es(es_id: int, units_allocated: int, db: SESSION_LOCAL = Depends(get_db)):
-    return update_es_db(es_id, units_allocated, db)
+@router.put("/update_emergency_service/")
+def update_es(request: EmergencyServiceUpdate, db: SESSION_LOCAL = Depends(get_db)):
+    return update_es_db(request, db)
 
 
 @router.post("/keep_track/")
