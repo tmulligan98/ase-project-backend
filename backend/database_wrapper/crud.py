@@ -257,3 +257,16 @@ def add_track_to_db(db: Session, track: KeepTrackCreate):
 
 def get_tracks(db: Session, skip: int = 0, limit: int = 100):
     return db.query(KeepTrack).offset(skip).limit(limit).all()
+
+
+def update_es_db(es_id, units_allocated, db: Session):
+    db.query(EmergencyService).filter(EmergencyService.id == es_id).update(
+        {
+            EmergencyService.units_busy: EmergencyService.units_busy + units_allocated,
+            EmergencyService.units_available: EmergencyService.units_available
+            - units_allocated,
+        },
+        synchronize_session=False,
+    )
+    db.commit()
+    return "updated"

@@ -5,6 +5,7 @@ from backend.database_wrapper.crud import (
     get_route_waypoints,
     add_track_to_db,
     get_tracks,
+    update_es_db,
 )
 from backend.database_wrapper.schemas import (
     CivilianUserModel,
@@ -183,9 +184,9 @@ def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return res
 
 
-@router.get("/update_emergency_service/")
-def update_es(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
-    pass
+@router.put("/update_emergency_service/")
+def update_es(es_id: int, units_allocated: int, db: SESSION_LOCAL = Depends(get_db)):
+    return update_es_db(es_id, units_allocated, db)
 
 
 @router.post("/keep_track/")
