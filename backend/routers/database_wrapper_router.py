@@ -19,6 +19,7 @@ from backend.database_wrapper.schemas import (
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services.models import (
     EmergencyServiceModel,
+    # EmergencyServiceUpdate,
     # EmergencyServiceResponse,
 )
 from backend.disaster_assessment.disaster_assesment import get_nearest_services
@@ -184,13 +185,13 @@ def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return res
 
 
-@router.put("/update_emergency_service/")
+@router.put("/update_emergency_service/{es_id}/{units_allocated}")
 def update_es(es_id: int, units_allocated: int, db: SESSION_LOCAL = Depends(get_db)):
     return update_es_db(es_id, units_allocated, db)
 
 
 @router.post("/keep_track/")
-def keeptrack(track: KeepTrackCreate, db: SESSION_LOCAL = Depends(get_db)):
+def add_track(track: KeepTrackCreate, db: SESSION_LOCAL = Depends(get_db)):
     return add_track_to_db(db=db, track=track)
 
 

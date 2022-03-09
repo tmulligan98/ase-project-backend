@@ -23,3 +23,11 @@ class EmergencyServiceResponse(EmergencyServiceModel):
 
     class Config:
         orm_mode = True
+
+
+class EmergencyServiceUpdate(BaseModel):
+    units_available: int
+    units_busy: int
+
+    class Config:
+        orm_mode = True

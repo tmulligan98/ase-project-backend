@@ -1,4 +1,5 @@
 import haversine as hs
+import requests
 
 
 def get_nearest_services(disasters, emergency_services):
@@ -147,7 +148,21 @@ def get_nearest_services(disasters, emergency_services):
                                         }
                                     )
                                     # update es table update_es(id, units_allocated=no_services_needed)
-                                    # add entry to keep track table
+                                    requests.put(
+                                        "http://127.0.0.1:8000/api/1/update_emergency_service",
+                                        json={
+                                            "es_id": disaster["id"],
+                                            "units_allocated": no_services_needed,
+                                        },
+                                    )
+                                    requests.post(
+                                        "http://127.0.0.1:8000/api/1/keep_track",
+                                        json={
+                                            "disaster_id": disaster["id"],
+                                            "es_id": details["id"],
+                                            "units_busy": no_services_needed,
+                                        },
+                                    )
                             if service == "garda" and details["units available"] != 0:
                                 if details["units available"] >= no_services_needed:
                                     allocated_garda_station.append(
