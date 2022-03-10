@@ -65,6 +65,7 @@ def get_nearest_services(disasters, emergency_services):
                         es_dict["units"],
                         es_dict["units_available"],
                         es_dict["units_busy"],
+                        es_dict["id"],
                     )
                 all_services[es] = x
 
@@ -82,6 +83,7 @@ def get_nearest_services(disasters, emergency_services):
                                 "units": distance[3],
                                 "units available": distance[4],
                                 "units busy": distance[5],
+                                "id": distance[6],
                             }
                         }
                     if (
@@ -96,6 +98,7 @@ def get_nearest_services(disasters, emergency_services):
                                 "units": distance[3],
                                 "units available": distance[4],
                                 "units busy": distance[5],
+                                "id": distance[6],
                             }
                         }
                     if (
@@ -110,6 +113,7 @@ def get_nearest_services(disasters, emergency_services):
                                 "units": distance[3],
                                 "units available": distance[4],
                                 "units busy": distance[5],
+                                "id": distance[6],
                             }
                         }
 
