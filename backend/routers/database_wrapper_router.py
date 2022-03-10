@@ -181,16 +181,6 @@ def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return res
 
 
-# @router.put("/update_emergency_service/")
-# def update_es(request: EmergencyServiceUpdate, db: SESSION_LOCAL = Depends(get_db)):
-#     return update_es_db(request, db)
-#
-#
-# @router.post("/keep_track/")
-# def add_track(track: KeepTrackCreate, db: SESSION_LOCAL = Depends(get_db)):
-#     return add_track_to_db(db=db, track=track)
-
-
 @router.get("/get_tracks/")
 def get_all_tracks(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
