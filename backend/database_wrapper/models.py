@@ -62,12 +62,9 @@ class EmergencyService(Base):
     type = Column(Enum(ServiceType), index=True)
     lat = Column(Float)
     long = Column(Float)
-    number_fire_engines = Column(Integer)
-    number_ambulances = Column(Integer)
-    number_armed_units = Column(Integer)
-    number_squad_car = Column(Integer)
-    number_armoured_car = Column(Integer)
-    number_personnel = Column(Integer)
+    units = Column(Integer)
+    units_available = Column(Integer)
+    units_busy = Column(Integer)
 
 
 class Route(Base):
@@ -88,3 +85,18 @@ class Waypoint(Base):
     sequence = Column(Integer)
     lat = Column(Float)
     lng = Column(Float)
+
+
+class KeepTrack(Base):
+    __tablename__ = "keeptrack"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    disaster_id = Column(
+        Integer,
+        ForeignKey(Disaster.id),
+    )
+    es_id = Column(
+        Integer,
+        ForeignKey(EmergencyService.id),
+    )
+
+    units_busy = Column(Integer)

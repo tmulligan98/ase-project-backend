@@ -3,6 +3,7 @@ from backend.database_wrapper.crud import (
     add_route_waypoint,
     get_disaster_route_ids,
     get_route_waypoints,
+    get_tracks,
 )
 from backend.database_wrapper.schemas import (
     CivilianUserModel,
@@ -17,8 +18,8 @@ from backend.emergency_services.models import (
     EmergencyServiceModel,
     EmergencyServiceResponse,
 )
+from backend.disaster_assessment.disaster_assesment import get_nearest_services
 from backend.database_wrapper import get_db
-from backend.disaster_assessment import get_nearest_services
 from backend.database_wrapper import (
     UserResponse,
     UserCreate,
@@ -180,7 +181,13 @@ def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return res
 
 
-# testing disaster assesment logic
+@router.get("/get_tracks/")
+def get_all_tracks(
+    skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+):
+    return get_tracks(db, skip=skip, limit=limit)
+
+
 @router.get(
     "/get_nearest_services/",
 )
@@ -198,4 +205,4 @@ def nearest_services(
     for dr in disasters_res:
         drs.append(json.loads(dr.json()))
 
-    return get_nearest_services(drs, ers)
+    return get_nearest_services(db, drs, ers)

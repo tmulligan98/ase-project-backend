@@ -3,7 +3,16 @@ from backend.emergency_services import EMERGENCY_SERVICES
 from backend.emergency_services.models import (
     EmergencyServiceResponse,
 )
-from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypoint
+from .models import (
+    User,
+    Disaster,
+    EmergencyService,
+    CivilianUser,
+    Route,
+    Waypoint,
+    KeepTrack,
+)
+
 from backend.utils import get_password_hash
 from .schemas import (
     DisasterBase,
@@ -97,7 +106,6 @@ def get_disaster_by_id(db: Session, id: int):
 def add_disaster_to_db(
     db: Session, disaster: DisasterCreate, host_name: str, is_civilian: bool
 ):
-
     if is_civilian:
         new_disaster = Disaster(
             # id=disaster.disaster_id,
@@ -146,12 +154,9 @@ def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
                 type=x.type,
                 lat=x.lat,
                 long=x.long,
-                number_fire_engines=x.number_fire_engines,
-                number_ambulances=x.number_ambulances,
-                number_armed_units=x.number_armed_units,
-                number_squad_car=x.number_squad_car,
-                number_armoured_car=x.number_armoured_car,
-                number_personnel=x.number_personnel,
+                units=x.units,
+                units_available=x.units_available,
+                units_busy=x.units_busy,
             ),
             temp,
         )
@@ -185,12 +190,9 @@ def add_constant_services(db: Session):
                 type=x.type,
                 lat=x.lat,
                 long=x.long,
-                number_fire_engines=x.number_fire_engines,
-                number_ambulances=x.number_ambulances,
-                number_armed_units=x.number_armed_units,
-                number_squad_car=x.number_squad_car,
-                number_armoured_car=x.number_armoured_car,
-                number_personnel=x.number_personnel,
+                units=x.units,
+                units_available=x.units_available,
+                units_busy=x.units_busy,
             ),
             EMERGENCY_SERVICES,
         )
@@ -242,3 +244,28 @@ def get_route_waypoints(db: Session, route_id: int):
         temp,
     )
     return list(res)
+
+
+def add_track_to_db(disaster_id: int, es_id: int, units_busy: int, db: Session):
+    new_track = KeepTrack(disaster_id=disaster_id, es_id=es_id, units_busy=units_busy)
+    db.add(new_track)
+    db.commit()
+    db.refresh(new_track)
+    return
+
+
+def get_tracks(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(KeepTrack).offset(skip).limit(limit).all()
+
+
+def update_es_db(es_id: int, units_allocated: int, db: Session):
+    db.query(EmergencyService).filter(EmergencyService.id == es_id).update(
+        {
+            EmergencyService.units_busy: EmergencyService.units_busy + units_allocated,
+            EmergencyService.units_available: EmergencyService.units_available
+            - units_allocated,
+        },
+        synchronize_session=False,
+    )
+    db.commit()
+    return "updated"

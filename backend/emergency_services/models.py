@@ -13,12 +13,9 @@ class EmergencyServiceModel(BaseModel):
     type: ServiceType
     lat: float
     long: float
-    number_fire_engines: int
-    number_ambulances: int
-    number_armed_units: int
-    number_squad_car: int
-    number_armoured_car: int
-    number_personnel: int
+    units: int
+    units_available: int
+    units_busy: int
 
 
 class EmergencyServiceResponse(EmergencyServiceModel):
@@ -26,3 +23,8 @@ class EmergencyServiceResponse(EmergencyServiceModel):
 
     class Config:
         orm_mode = True
+
+
+class EmergencyServiceUpdate(BaseModel):
+    es_id: int
+    units_allocated: int
