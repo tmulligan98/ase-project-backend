@@ -6,7 +6,7 @@ from backend.database_wrapper import get_db
 router = APIRouter()
 
 
-def get_nearest_services(disasters, emergency_services):
+def get_nearest_services(db, disasters, emergency_services):
     data_to_return = {}
     es_garda = []
     es_fire_brigade = []
@@ -157,31 +157,15 @@ def get_nearest_services(disasters, emergency_services):
                                     )
 
                                     update_es_db(
-                                        details["id"], no_services_needed, db=get_db()
+                                        details["id"], no_services_needed, db=db
                                     )
                                     add_track_to_db(
                                         disaster["id"],
                                         details["id"],
                                         no_services_needed,
-                                        db=get_db(),
+                                        db=db,
                                     )
 
-                                    # update es table update_es(id, units_allocated=no_services_needed)
-                                    # requests.put(
-                                    #     "http://127.0.0.1:8000/api/1/update_emergency_service",
-                                    #     json={
-                                    #         "es_id": disaster["id"],
-                                    #         "units_allocated": no_services_needed,
-                                    #     },
-                                    # )
-                                    # requests.post(
-                                    #     "http://127.0.0.1:8000/api/1/keep_track",
-                                    #     json={
-                                    #         "disaster_id": disaster["id"],
-                                    #         "es_id": details["id"],
-                                    #         "units_busy": no_services_needed,
-                                    #     },
-                                    # )
                             if service == "garda" and details["units available"] != 0:
                                 if details["units available"] >= no_services_needed:
                                     allocated_garda_station.append(

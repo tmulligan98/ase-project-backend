@@ -215,4 +215,4 @@ def nearest_services(
     for dr in disasters_res:
         drs.append(json.loads(dr.json()))
 
-    return get_nearest_services(drs, ers)
+    return get_nearest_services(db, drs, ers)
