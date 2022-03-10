@@ -1,7 +1,6 @@
 import haversine as hs
 from backend.database_wrapper.crud import update_es_db, add_track_to_db
 from fastapi import APIRouter
-from backend.database_wrapper import get_db
 
 router = APIRouter()
 
