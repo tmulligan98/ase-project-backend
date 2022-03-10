@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from backend.emergency_services import EMERGENCY_SERVICES
 from backend.emergency_services.models import (
     EmergencyServiceResponse,
-    EmergencyServiceUpdate,
 )
 from .models import (
     User,
@@ -27,7 +26,6 @@ from .schemas import (
     CivilianUserModel,
     WaypointCreate,
     WaypointResponse,
-    KeepTrackCreate,
 )
 
 
@@ -248,10 +246,8 @@ def get_route_waypoints(db: Session, route_id: int):
     return list(res)
 
 
-def add_track_to_db(db: Session, track: KeepTrackCreate):
-    new_track = KeepTrack(
-        disaster_id=track.disaster_id, es_id=track.es_id, units_busy=track.units_busy
-    )
+def add_track_to_db(disaster_id, es_id, units_busy, db: Session):
+    new_track = KeepTrack(disaster_id=disaster_id, es_id=es_id, units_busy=units_busy)
     db.add(new_track)
     db.commit()
     db.refresh(new_track)
@@ -262,13 +258,12 @@ def get_tracks(db: Session, skip: int = 0, limit: int = 100):
     return db.query(KeepTrack).offset(skip).limit(limit).all()
 
 
-def update_es_db(request: EmergencyServiceUpdate, db: Session):
-    db.query(EmergencyService).filter(EmergencyService.id == request.es_id).update(
+def update_es_db(es_id, units_allocated, db: Session):
+    db.query(EmergencyService).filter(EmergencyService.id == es_id).update(
         {
-            EmergencyService.units_busy: EmergencyService.units_busy
-            + request.units_allocated,
+            EmergencyService.units_busy: EmergencyService.units_busy + units_allocated,
             EmergencyService.units_available: EmergencyService.units_available
-            - request.units_allocated,
+            - units_allocated,
         },
         synchronize_session=False,
     )

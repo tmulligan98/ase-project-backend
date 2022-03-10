@@ -1,5 +1,9 @@
 import haversine as hs
-import requests
+from backend.database_wrapper.crud import update_es_db, add_track_to_db
+from fastapi import APIRouter
+from backend.database_wrapper import get_db
+
+router = APIRouter()
 
 
 def get_nearest_services(disasters, emergency_services):
@@ -147,22 +151,33 @@ def get_nearest_services(disasters, emergency_services):
                                             "long": details["long"],
                                         }
                                     )
+
+                                    update_es_db(
+                                        details["id"], no_services_needed, db=get_db()
+                                    )
+                                    add_track_to_db(
+                                        disaster["id"],
+                                        details["id"],
+                                        no_services_needed,
+                                        db=get_db(),
+                                    )
+
                                     # update es table update_es(id, units_allocated=no_services_needed)
-                                    requests.put(
-                                        "http://127.0.0.1:8000/api/1/update_emergency_service",
-                                        json={
-                                            "es_id": disaster["id"],
-                                            "units_allocated": no_services_needed,
-                                        },
-                                    )
-                                    requests.post(
-                                        "http://127.0.0.1:8000/api/1/keep_track",
-                                        json={
-                                            "disaster_id": disaster["id"],
-                                            "es_id": details["id"],
-                                            "units_busy": no_services_needed,
-                                        },
-                                    )
+                                    # requests.put(
+                                    #     "http://127.0.0.1:8000/api/1/update_emergency_service",
+                                    #     json={
+                                    #         "es_id": disaster["id"],
+                                    #         "units_allocated": no_services_needed,
+                                    #     },
+                                    # )
+                                    # requests.post(
+                                    #     "http://127.0.0.1:8000/api/1/keep_track",
+                                    #     json={
+                                    #         "disaster_id": disaster["id"],
+                                    #         "es_id": details["id"],
+                                    #         "units_busy": no_services_needed,
+                                    #     },
+                                    # )
                             if service == "garda" and details["units available"] != 0:
                                 if details["units available"] >= no_services_needed:
                                     allocated_garda_station.append(

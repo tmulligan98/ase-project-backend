@@ -3,9 +3,7 @@ from backend.database_wrapper.crud import (
     add_route_waypoint,
     get_disaster_route_ids,
     get_route_waypoints,
-    add_track_to_db,
     get_tracks,
-    update_es_db,
 )
 from backend.database_wrapper.schemas import (
     CivilianUserModel,
@@ -14,12 +12,10 @@ from backend.database_wrapper.schemas import (
     RouteResponse,
     WaypointCreate,
     WaypointResponse,
-    KeepTrackCreate,
 )
 from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services.models import (
     EmergencyServiceModel,
-    EmergencyServiceUpdate,
     EmergencyServiceResponse,
 )
 from backend.disaster_assessment.disaster_assesment import get_nearest_services
@@ -185,14 +181,14 @@ def get_waypoints(route_id: int, db: SESSION_LOCAL = Depends(get_db)):
     return res
 
 
-@router.put("/update_emergency_service/")
-def update_es(request: EmergencyServiceUpdate, db: SESSION_LOCAL = Depends(get_db)):
-    return update_es_db(request, db)
-
-
-@router.post("/keep_track/")
-def add_track(track: KeepTrackCreate, db: SESSION_LOCAL = Depends(get_db)):
-    return add_track_to_db(db=db, track=track)
+# @router.put("/update_emergency_service/")
+# def update_es(request: EmergencyServiceUpdate, db: SESSION_LOCAL = Depends(get_db)):
+#     return update_es_db(request, db)
+#
+#
+# @router.post("/keep_track/")
+# def add_track(track: KeepTrackCreate, db: SESSION_LOCAL = Depends(get_db)):
+#     return add_track_to_db(db=db, track=track)
 
 
 @router.get("/get_tracks/")
