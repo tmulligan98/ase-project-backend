@@ -246,7 +246,7 @@ def get_route_waypoints(db: Session, route_id: int):
     return list(res)
 
 
-def add_track_to_db(disaster_id, es_id, units_busy, db: Session):
+def add_track_to_db(disaster_id: int, es_id: int, units_busy: int, db: Session):
     new_track = KeepTrack(disaster_id=disaster_id, es_id=es_id, units_busy=units_busy)
     db.add(new_track)
     db.commit()
@@ -258,7 +258,7 @@ def get_tracks(db: Session, skip: int = 0, limit: int = 100):
     return db.query(KeepTrack).offset(skip).limit(limit).all()
 
 
-def update_es_db(es_id, units_allocated, db: Session):
+def update_es_db(es_id: int, units_allocated: int, db: Session):
     db.query(EmergencyService).filter(EmergencyService.id == es_id).update(
         {
             EmergencyService.units_busy: EmergencyService.units_busy + units_allocated,
