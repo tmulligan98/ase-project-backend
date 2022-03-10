@@ -68,7 +68,12 @@ def get_nearest_services(db, disasters, emergency_services):
                     )
                 all_services[es] = x
 
-            for es_name, distances in all_services.items():
+            for (
+                es_name,
+                distances,
+            ) in (
+                all_services.items()
+            ):  # get first, second and third nearest services of a disaster using haversine
                 for name, distance in distances.items():
                     if (
                         distance
@@ -118,7 +123,9 @@ def get_nearest_services(db, disasters, emergency_services):
 
             no_services_needed = 0
 
-            if disaster["scale"] <= 3:
+            if (
+                disaster["scale"] <= 3
+            ):  # assign services needed to deal with a disatser based on the scale of disaster
                 no_services_needed = 2
             elif disaster["scale"] > 3 and disaster["scale"] <= 6:
                 no_services_needed = 3
@@ -129,7 +136,7 @@ def get_nearest_services(db, disasters, emergency_services):
             allocated_firebrigade_station = []
             allocated_garda_station = []
 
-            for x in [
+            for x in [  # allocating services
                 first_nearest_services,
                 second_nearest_services,
                 third_nearest_services,
@@ -145,7 +152,9 @@ def get_nearest_services(db, disasters, emergency_services):
                                 service == "ambulance"
                                 and details["units available"] != 0
                             ):
-                                if details["units available"] >= no_services_needed:
+                                if (
+                                    details["units available"] >= no_services_needed
+                                ):  # see if the service can cater the no. of needed services
                                     allocated_ambulance_station.append(
                                         {
                                             "name": name,
@@ -155,10 +164,10 @@ def get_nearest_services(db, disasters, emergency_services):
                                         }
                                     )
 
-                                    update_es_db(
+                                    update_es_db(  # update emergency service table
                                         details["id"], no_services_needed, db=db
                                     )
-                                    add_track_to_db(
+                                    add_track_to_db(  # keep track of which services are busy with which disaster
                                         disaster["id"],
                                         details["id"],
                                         no_services_needed,
@@ -175,7 +184,15 @@ def get_nearest_services(db, disasters, emergency_services):
                                             "long": details["long"],
                                         }
                                     )
-                                    # update database entries
+                                    update_es_db(  # update emergency service table
+                                        details["id"], no_services_needed, db=db
+                                    )
+                                    add_track_to_db(  # keep track of which services are busy with which disaster
+                                        disaster["id"],
+                                        details["id"],
+                                        no_services_needed,
+                                        db=db,
+                                    )
 
                             if (
                                 service == "fire_brigade"
@@ -190,7 +207,15 @@ def get_nearest_services(db, disasters, emergency_services):
                                             "long": details["long"],
                                         }
                                     )
-                                    # update database entries
+                                    update_es_db(  # update emergency service table
+                                        details["id"], no_services_needed, db=db
+                                    )
+                                    add_track_to_db(  # keep track of which services are busy with which disaster
+                                        disaster["id"],
+                                        details["id"],
+                                        no_services_needed,
+                                        db=db,
+                                    )
 
             data_to_return[disaster["id"]] = {
                 "ambulance": allocated_ambulance_station,
