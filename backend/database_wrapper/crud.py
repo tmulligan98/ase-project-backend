@@ -7,6 +7,7 @@ from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypo
 from backend.utils import get_password_hash
 from .schemas import (
     DisasterBase,
+    DisasterVerify,
     RouteCreate,
     RouteResponse,
     UserCreate,
@@ -74,20 +75,52 @@ def create_user(db: Session, user: UserCreate):
 # ----- Disasters -----
 
 
-def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
-    temp = db.query(Disaster).offset(skip).limit(limit).all()
-    res = map(
-        lambda x: DisasterResponse(
-            id=x.id,
-            disaster_type=x.type,
-            scale=x.scale,
-            lat=x.latitude,
-            long=x.longitude,
-            radius=x.radius,
-        ),
-        temp,
+def update_disaster_verification(db: Session, disaster: DisasterVerify):
+    db.query(Disaster).filter(Disaster.id == disaster.id).update(
+        {"verified": True, "scale": disaster.scale, "radius": disaster.radius}
     )
-    return list(res)
+    db.commit()
+
+
+def get_disasters_from_db(
+    db: Session, skip: int = 0, limit: int = 100, verified: bool = None
+):
+
+    if verified is None:
+        temp = db.query(Disaster).offset(skip).limit(limit).all()
+        res = map(
+            lambda x: DisasterResponse(
+                id=x.id,
+                disaster_type=x.type,
+                scale=x.scale,
+                lat=x.latitude,
+                long=x.longitude,
+                radius=x.radius,
+            ),
+            temp,
+        )
+        return list(res)
+
+    if verified is False:
+        temp = (
+            db.query(Disaster)
+            .filter(Disaster.verified is False)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+        res = map(
+            lambda x: DisasterResponse(
+                id=x.id,
+                disaster_type=x.type,
+                scale=x.scale,
+                lat=x.latitude,
+                long=x.longitude,
+                radius=x.radius,
+            ),
+            temp,
+        )
+        return list(res)
 
 
 def get_disaster_by_id(db: Session, id: int):

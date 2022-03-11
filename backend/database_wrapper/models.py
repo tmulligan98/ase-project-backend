@@ -51,6 +51,7 @@ class Disaster(Base):
     latitude = Column(Float, unique=False)
     longitude = Column(Float, unique=False)
     radius = Column(Integer, unique=False)
+    verified = Column(Boolean, unique=False, default=False)
     # routes = relationship("Route", back_populates="disasters")
 
 

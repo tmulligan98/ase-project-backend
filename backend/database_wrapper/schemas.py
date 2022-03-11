@@ -41,8 +41,14 @@ class DisasterCreateEmergency(DisasterBase):
     user_id: str
 
 
+class DisasterVerify(BaseModel):
+    id: int
+    scale: int
+    radius: int
+
+
 class DisasterResponse(DisasterBase):
-    id: str
+    id: int
 
     class Config:
         orm_mode = True
