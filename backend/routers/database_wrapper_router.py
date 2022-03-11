@@ -18,7 +18,7 @@ from backend.emergency_services.models import (
     EmergencyServiceModel,
     EmergencyServiceResponse,
 )
-from backend.disaster_assessment.disaster_assesment import get_nearest_services
+from backend.disaster_assessment.disaster_assesment import NearestServices
 from backend.database_wrapper import get_db
 from backend.database_wrapper import (
     UserResponse,
@@ -194,15 +194,9 @@ def get_all_tracks(
 def nearest_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
-    emergency_res = get_emergency_services_db(db, skip=skip, limit=limit)
     disasters_res = get_disasters_from_db(db, skip=skip, limit=limit)
-
-    ers = []
-    for er in emergency_res:
-        ers.append(json.loads(er.json()))
-
     drs = []
     for dr in disasters_res:
         drs.append(json.loads(dr.json()))
 
-    return get_nearest_services(db, drs, ers)
+    return NearestServices().get_nearest_services(db, drs)
