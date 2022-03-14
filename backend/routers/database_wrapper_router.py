@@ -4,6 +4,7 @@ from backend.database_wrapper.crud import (
     get_disaster_route_ids,
     get_route_waypoints,
     get_tracks,
+    free_es_from_track_table,
 )
 from backend.database_wrapper.schemas import (
     CivilianUserModel,
@@ -200,3 +201,10 @@ def nearest_services(
         drs.append(json.loads(dr.json()))
 
     return NearestServices().get_nearest_services(db, drs)
+
+
+@router.put(
+    "/free services/{disaster_id}",
+)
+def free_services(disaster_id, db: SESSION_LOCAL = Depends(get_db)):
+    free_es_from_track_table(disaster_id, db=db)

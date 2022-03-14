@@ -281,3 +281,8 @@ def update_disaster_status(d_id: int, status: bool, db: Session):
     )
     db.commit()
     return "updated disaster status"
+
+
+def free_es_from_track_table(disaster_id: int, db: Session):
+    data = db.query(KeepTrack).filter(Disaster.id == disaster_id).all()
+    print(data)
