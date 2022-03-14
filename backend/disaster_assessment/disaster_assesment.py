@@ -3,6 +3,7 @@ from backend.database_wrapper.crud import (
     update_es_db,
     add_track_to_db,
     get_emergency_services_db,
+    update_disaster_status,
 )
 from fastapi import APIRouter
 import json
@@ -14,7 +15,8 @@ class NearestServices:
     def __init__(self):
         self.data_to_return = {}
 
-    def n_nearest_services(self, disaster, distributed_es):
+    @staticmethod
+    def n_nearest_services(disaster, distributed_es):
         all_services = {}
         first_nearest_services = {}
         second_nearest_services = {}
@@ -110,7 +112,8 @@ class NearestServices:
                         }
         return first_nearest_services, second_nearest_services, third_nearest_services
 
-    def fetch_updated_es(self, db):
+    @staticmethod
+    def fetch_updated_es(db):
         emergency_res = get_emergency_services_db(db, skip=10, limit=100)
         ers = []
         for er in emergency_res:
@@ -118,7 +121,8 @@ class NearestServices:
 
         return ers
 
-    def distribute_services(self, emergency_services):
+    @staticmethod
+    def distribute_services(emergency_services):
         es_garda = []
         es_fire_brigade = []
         es_ambulance = []
@@ -138,7 +142,8 @@ class NearestServices:
         }
         return distributed_es
 
-    def services_needed(self, disaster):
+    @staticmethod
+    def services_needed(disaster):
         no_services_needed = 0
         if (
             disaster["scale"] <= 3
@@ -151,8 +156,8 @@ class NearestServices:
 
         return no_services_needed
 
+    @staticmethod
     def allocate_services(
-        self,
         first_nearest_services,
         second_nearest_services,
         third_nearest_services,
@@ -248,34 +253,43 @@ class NearestServices:
             allocated_firebrigade_station,
         )
 
+    @staticmethod
+    def update_already_addressed_status(d_id, status, db):
+        update_disaster_status(d_id, status, db)
+
     def get_nearest_services(self, db, disasters):
 
         for disaster in disasters:
-            emergency_services = self.fetch_updated_es(db)
-            distributed_es = self.distribute_services(emergency_services)
-            (
-                first_nearest_services,
-                second_nearest_services,
-                third_nearest_services,
-            ) = self.n_nearest_services(disaster, distributed_es)
-            no_services_needed = self.services_needed(disaster)
+            if not disaster["already_addressed"]:
+                emergency_services = NearestServices.fetch_updated_es(db)
+                distributed_es = NearestServices.distribute_services(emergency_services)
+                (
+                    first_nearest_services,
+                    second_nearest_services,
+                    third_nearest_services,
+                ) = NearestServices.n_nearest_services(disaster, distributed_es)
+                no_services_needed = self.services_needed(disaster)
 
-            (
-                allocated_ambulance_station,
-                allocated_garda_station,
-                allocated_firebrigade_station,
-            ) = self.allocate_services(
-                first_nearest_services,
-                second_nearest_services,
-                third_nearest_services,
-                no_services_needed,
-                disaster,
-                db,
-            )
-            self.data_to_return[disaster["id"]] = {
-                "ambulance": allocated_ambulance_station,
-                "police": allocated_garda_station,
-                "fire_brigade": allocated_firebrigade_station,
-            }
+                (
+                    allocated_ambulance_station,
+                    allocated_garda_station,
+                    allocated_firebrigade_station,
+                ) = NearestServices.allocate_services(
+                    first_nearest_services,
+                    second_nearest_services,
+                    third_nearest_services,
+                    no_services_needed,
+                    disaster,
+                    db,
+                )
+                self.data_to_return[disaster["id"]] = {
+                    "ambulance": allocated_ambulance_station,
+                    "police": allocated_garda_station,
+                    "fire_brigade": allocated_firebrigade_station,
+                }
+
+                NearestServices.update_already_addressed_status(
+                    disaster["id"], True, db
+                )
 
         return self.data_to_return

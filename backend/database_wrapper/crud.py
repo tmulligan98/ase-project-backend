@@ -93,6 +93,7 @@ def get_disasters_from_db(db: Session, skip: int = 0, limit: int = 100):
             lat=x.latitude,
             long=x.longitude,
             radius=x.radius,
+            already_addressed=x.already_addressed,
         ),
         temp,
     )
@@ -268,4 +269,15 @@ def update_es_db(es_id: int, units_allocated: int, db: Session):
         synchronize_session=False,
     )
     db.commit()
-    return "updated"
+    return "updated es units"
+
+
+def update_disaster_status(d_id: int, status: bool, db: Session):
+    db.query(Disaster).filter(Disaster.id == d_id).update(
+        {
+            Disaster.units_busy: status,
+        },
+        synchronize_session=False,
+    )
+    db.commit()
+    return "updated disaster status"

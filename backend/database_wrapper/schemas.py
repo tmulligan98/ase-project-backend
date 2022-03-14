@@ -43,6 +43,7 @@ class DisasterCreateEmergency(DisasterBase):
 
 class DisasterResponse(DisasterBase):
     id: str
+    already_addressed: bool
 
     class Config:
         orm_mode = True
