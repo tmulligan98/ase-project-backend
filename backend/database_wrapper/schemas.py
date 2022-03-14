@@ -47,8 +47,15 @@ class DisasterVerify(BaseModel):
     radius: int
 
 
+class DisasterCompletion(BaseModel):
+    id: int
+    complete: bool
+
+
 class DisasterResponse(DisasterBase):
     id: int
+    verified: bool
+    completed: bool
 
     class Config:
         orm_mode = True

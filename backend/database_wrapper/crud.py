@@ -7,6 +7,7 @@ from .models import User, Disaster, EmergencyService, CivilianUser, Route, Waypo
 from backend.utils import get_password_hash
 from .schemas import (
     DisasterBase,
+    DisasterCompletion,
     DisasterVerify,
     RouteCreate,
     RouteResponse,
@@ -82,45 +83,60 @@ def update_disaster_verification(db: Session, disaster: DisasterVerify):
     db.commit()
 
 
+def update_disaster_completion(db: Session, disaster: DisasterCompletion):
+    db.query(Disaster).filter(Disaster.id == disaster.id).update({"completed": True})
+    db.commit()
+
+
 def get_disasters_from_db(
-    db: Session, skip: int = 0, limit: int = 100, verified: bool = None
+    db: Session,
+    skip: int = 0,
+    limit: int = 100,
+    verified: bool = None,
+    completed: bool = None,
 ):
 
-    if verified is None:
-        temp = db.query(Disaster).offset(skip).limit(limit).all()
-        res = map(
-            lambda x: DisasterResponse(
-                id=x.id,
-                disaster_type=x.type,
-                scale=x.scale,
-                lat=x.latitude,
-                long=x.longitude,
-                radius=x.radius,
-            ),
-            temp,
-        )
-        return list(res)
-
-    if verified is False:
+    if completed is not None:
         temp = (
             db.query(Disaster)
-            .filter(Disaster.verified is False)
+            .filter(Disaster.completed == completed)
             .offset(skip)
             .limit(limit)
             .all()
         )
-        res = map(
-            lambda x: DisasterResponse(
-                id=x.id,
-                disaster_type=x.type,
-                scale=x.scale,
-                lat=x.latitude,
-                long=x.longitude,
-                radius=x.radius,
-            ),
-            temp,
+    elif verified is not None:
+        temp = (
+            db.query(Disaster)
+            .filter(Disaster.verified == verified)
+            .offset(skip)
+            .limit(limit)
+            .all()
         )
-        return list(res)
+    elif verified is not None and completed is not None:
+        temp = (
+            db.query(Disaster)
+            .filter(Disaster.verified == verified and Disaster.completed == completed)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+    else:
+        temp = db.query(Disaster).offset(skip).limit(limit).all()
+
+    res = map(
+        lambda x: DisasterResponse(
+            id=x.id,
+            disaster_type=x.type,
+            scale=x.scale,
+            lat=x.latitude,
+            long=x.longitude,
+            radius=x.radius,
+            verified=x.verified,
+            completed=x.completed,
+        ),
+        temp,
+    )
+    return list(res)
 
 
 def get_disaster_by_id(db: Session, id: int):
@@ -141,6 +157,8 @@ def add_disaster_to_db(
             longitude=disaster.long,
             user_id_emergency=None,
             radius=disaster.radius,
+            verified=False,
+            completed=False,
         )
     else:
         new_disaster = Disaster(
@@ -152,6 +170,8 @@ def add_disaster_to_db(
             longitude=disaster.long,
             user_id_emergency=host_name,
             radius=disaster.radius,
+            verified=False,
+            completed=False,
         )
     db.add(new_disaster)
     db.commit()
