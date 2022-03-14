@@ -268,7 +268,7 @@ class NearestServices:
                     second_nearest_services,
                     third_nearest_services,
                 ) = NearestServices.n_nearest_services(disaster, distributed_es)
-                no_services_needed = self.services_needed(disaster)
+                no_services_needed = NearestServices.services_needed(disaster)
 
                 (
                     allocated_ambulance_station,
