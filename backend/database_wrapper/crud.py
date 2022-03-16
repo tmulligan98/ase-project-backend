@@ -275,7 +275,7 @@ def update_es_db(es_id: int, units_allocated: int, db: Session):
 def update_disaster_status(d_id: int, status: bool, db: Session):
     db.query(Disaster).filter(Disaster.id == d_id).update(
         {
-            Disaster.units_busy: status,
+            Disaster.already_addressed: status,
         },
         synchronize_session=False,
     )
