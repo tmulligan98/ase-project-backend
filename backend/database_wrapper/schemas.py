@@ -53,6 +53,7 @@ class DisasterCompletion(BaseModel):
 
 
 class DisasterResponse(DisasterBase):
+    already_addressed: bool
     id: int
     verified: bool
     completed: bool

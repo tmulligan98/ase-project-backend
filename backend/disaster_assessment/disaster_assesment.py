@@ -1,32 +1,22 @@
 import haversine as hs
-from backend.database_wrapper.crud import update_es_db, add_track_to_db
+from backend.database_wrapper.crud import (
+    update_es_db,
+    add_track_to_db,
+    get_emergency_services_db,
+    update_disaster_status,
+)
 from fastapi import APIRouter
+import json
 
 router = APIRouter()
 
 
-def get_nearest_services(db, disasters, emergency_services):
-    data_to_return = {}
-    es_garda = []
-    es_fire_brigade = []
-    es_ambulance = []
+class NearestServices:
+    def __init__(self):
+        self.data_to_return = {}
 
-    for es in emergency_services:
-        if es["type"] == 0:
-            es_garda.append(es)
-        elif es["type"] == 1:
-            es_fire_brigade.append(es)
-        elif es["type"] == 2:
-            es_ambulance.append(es)
-
-    distributed_es = {
-        "fire_brigade": es_fire_brigade,
-        "ambulance": es_ambulance,
-        "garda": es_garda,
-    }
-    disaster_id = 0
-    for disaster in disasters:
-        disaster_id += 1
+    @staticmethod
+    def n_nearest_services(disaster, distributed_es):
         all_services = {}
         first_nearest_services = {}
         second_nearest_services = {}
@@ -120,107 +110,200 @@ def get_nearest_services(db, disasters, emergency_services):
                                 "id": distance[6],
                             }
                         }
+        return first_nearest_services, second_nearest_services, third_nearest_services
 
-            no_services_needed = 0
+    @staticmethod
+    def fetch_updated_es(db):
+        emergency_res = get_emergency_services_db(db, skip=0, limit=100)
+        ers = []
+        for er in emergency_res:
+            ers.append(json.loads(er.json()))
 
+        return ers
+
+    @staticmethod
+    def distribute_services(emergency_services):
+        es_garda = []
+        es_fire_brigade = []
+        es_ambulance = []
+
+        for es in emergency_services:
+            if es["type"] == 0:
+                es_garda.append(es)
+            elif es["type"] == 1:
+                es_fire_brigade.append(es)
+            elif es["type"] == 2:
+                es_ambulance.append(es)
+
+        distributed_es = {
+            "fire_brigade": es_fire_brigade,
+            "ambulance": es_ambulance,
+            "garda": es_garda,
+        }
+        return distributed_es
+
+    @staticmethod
+    def services_needed(disaster):
+        no_services_needed = 0
+        if (
+            disaster["scale"] <= 3
+        ):  # assign services needed to deal with a disatser based on the scale of disaster
+            no_services_needed = 2
+        elif 3 < disaster["scale"] <= 6:
+            no_services_needed = 3
+        elif disaster["scale"] > 6:
+            no_services_needed = 5
+
+        return no_services_needed
+
+    @staticmethod
+    def allocate_services(
+        first_nearest_services,
+        second_nearest_services,
+        third_nearest_services,
+        no_services_needed,
+        disaster,
+        db,
+    ):
+        allocated_ambulance_station = []
+        allocated_firebrigade_station = []
+        allocated_garda_station = []
+
+        for x in [  # allocating services
+            first_nearest_services,
+            second_nearest_services,
+            third_nearest_services,
+        ]:
             if (
-                disaster["scale"] <= 3
-            ):  # assign services needed to deal with a disatser based on the scale of disaster
-                no_services_needed = 2
-            elif disaster["scale"] > 3 and disaster["scale"] <= 6:
-                no_services_needed = 3
-            elif disaster["scale"] > 6:
-                no_services_needed = 5
-
-            allocated_ambulance_station = []
-            allocated_firebrigade_station = []
-            allocated_garda_station = []
-
-            for x in [  # allocating services
-                first_nearest_services,
-                second_nearest_services,
-                third_nearest_services,
-            ]:
-                if (
-                    not allocated_firebrigade_station
-                    or not allocated_ambulance_station
-                    or not allocated_garda_station
-                ):
-                    for service, info in x.items():
-                        for name, details in info.items():
+                not allocated_firebrigade_station
+                or not allocated_ambulance_station
+                or not allocated_garda_station
+            ):
+                for service, info in x.items():
+                    for name, details in info.items():
+                        if (
+                            service == "ambulance"
+                            and details["units available"] != 0
+                            and not allocated_ambulance_station
+                        ):
                             if (
-                                service == "ambulance"
-                                and details["units available"] != 0
-                            ):
-                                if (
-                                    details["units available"] >= no_services_needed
-                                ):  # see if the service can cater the no. of needed services
-                                    allocated_ambulance_station.append(
-                                        {
-                                            "name": name,
-                                            "distance": details["distance"],
-                                            "lat": details["lat"],
-                                            "long": details["long"],
-                                        }
-                                    )
+                                details["units available"] >= no_services_needed
+                            ):  # see if the service can cater the no. of needed services
+                                allocated_ambulance_station.append(
+                                    {
+                                        "name": name,
+                                        "distance": details["distance"],
+                                        "lat": details["lat"],
+                                        "long": details["long"],
+                                    }
+                                )
 
-                                    update_es_db(  # update emergency service table
-                                        details["id"], no_services_needed, db=db
-                                    )
-                                    add_track_to_db(  # keep track of which services are busy with which disaster
-                                        disaster["id"],
-                                        details["id"],
-                                        no_services_needed,
-                                        db=db,
-                                    )
+                                update_es_db(  # update emergency service table
+                                    details["id"], no_services_needed, db=db
+                                )
+                                add_track_to_db(  # keep track of which services are busy with which disaster
+                                    disaster["id"],
+                                    details["id"],
+                                    no_services_needed,
+                                    db=db,
+                                )
 
-                            if service == "garda" and details["units available"] != 0:
-                                if details["units available"] >= no_services_needed:
-                                    allocated_garda_station.append(
-                                        {
-                                            "name": name,
-                                            "distance": details["distance"],
-                                            "lat": details["lat"],
-                                            "long": details["long"],
-                                        }
-                                    )
-                                    update_es_db(  # update emergency service table
-                                        details["id"], no_services_needed, db=db
-                                    )
-                                    add_track_to_db(  # keep track of which services are busy with which disaster
-                                        disaster["id"],
-                                        details["id"],
-                                        no_services_needed,
-                                        db=db,
-                                    )
+                        if (
+                            service == "garda"
+                            and details["units available"] != 0
+                            and not allocated_garda_station
+                        ):
+                            if details["units available"] >= no_services_needed:
+                                allocated_garda_station.append(
+                                    {
+                                        "name": name,
+                                        "distance": details["distance"],
+                                        "lat": details["lat"],
+                                        "long": details["long"],
+                                    }
+                                )
+                                update_es_db(  # update emergency service table
+                                    details["id"], no_services_needed, db=db
+                                )
+                                add_track_to_db(  # keep track of which services are busy with which disaster
+                                    disaster["id"],
+                                    details["id"],
+                                    no_services_needed,
+                                    db=db,
+                                )
 
-                            if (
-                                service == "fire_brigade"
-                                and details["units available"] != 0
-                            ):
-                                if details["units available"] >= no_services_needed:
-                                    allocated_firebrigade_station.append(
-                                        {
-                                            "name": name,
-                                            "distance": details["distance"],
-                                            "lat": details["lat"],
-                                            "long": details["long"],
-                                        }
-                                    )
-                                    update_es_db(  # update emergency service table
-                                        details["id"], no_services_needed, db=db
-                                    )
-                                    add_track_to_db(  # keep track of which services are busy with which disaster
-                                        disaster["id"],
-                                        details["id"],
-                                        no_services_needed,
-                                        db=db,
-                                    )
+                        if (
+                            service == "fire_brigade"
+                            and details["units available"] != 0
+                            and not allocated_firebrigade_station
+                        ):
+                            if details["units available"] >= no_services_needed:
+                                allocated_firebrigade_station.append(
+                                    {
+                                        "name": name,
+                                        "distance": details["distance"],
+                                        "lat": details["lat"],
+                                        "long": details["long"],
+                                    }
+                                )
+                                update_es_db(  # update emergency service table
+                                    details["id"], no_services_needed, db=db
+                                )
+                                add_track_to_db(  # keep track of which services are busy with which disaster
+                                    disaster["id"],
+                                    details["id"],
+                                    no_services_needed,
+                                    db=db,
+                                )
 
-            data_to_return[disaster["id"]] = {
-                "ambulance": allocated_ambulance_station,
-                "police": allocated_garda_station,
-                "fire_brigade": allocated_firebrigade_station,
-            }
+        return (
+            allocated_ambulance_station,
+            allocated_garda_station,
+            allocated_firebrigade_station,
+        )
 
-    return data_to_return
+    @staticmethod
+    def update_already_addressed_status(d_id, status, db):
+        update_disaster_status(d_id, status, db)
+
+    def get_nearest_services(self, db, disasters):
+
+        for disaster in disasters:
+            if not disaster["already_addressed"]:
+
+                emergency_services = NearestServices.fetch_updated_es(db)
+
+                distributed_es = NearestServices.distribute_services(emergency_services)
+
+                (
+                    first_nearest_services,
+                    second_nearest_services,
+                    third_nearest_services,
+                ) = NearestServices.n_nearest_services(disaster, distributed_es)
+
+                no_services_needed = NearestServices.services_needed(disaster)
+
+                (
+                    allocated_ambulance_station,
+                    allocated_garda_station,
+                    allocated_firebrigade_station,
+                ) = NearestServices.allocate_services(
+                    first_nearest_services,
+                    second_nearest_services,
+                    third_nearest_services,
+                    no_services_needed,
+                    disaster,
+                    db,
+                )
+
+                self.data_to_return[disaster["id"]] = {
+                    "ambulance": allocated_ambulance_station,
+                    "police": allocated_garda_station,
+                    "fire_brigade": allocated_firebrigade_station,
+                }
+
+                NearestServices.update_already_addressed_status(
+                    disaster["id"], True, db
+                )
+
+        return self.data_to_return

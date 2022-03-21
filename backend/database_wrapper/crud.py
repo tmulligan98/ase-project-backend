@@ -140,6 +140,7 @@ def get_disasters_from_db(
             lat=x.latitude,
             long=x.longitude,
             radius=x.radius,
+            already_addressed=x.already_addressed,
             verified=x.verified,
             completed=x.completed,
         ),
@@ -321,4 +322,41 @@ def update_es_db(es_id: int, units_allocated: int, db: Session):
         synchronize_session=False,
     )
     db.commit()
-    return "updated"
+    return "updated es units"
+
+
+def update_disaster_status(d_id: int, status: bool, db: Session):
+    db.query(Disaster).filter(Disaster.id == d_id).update(
+        {
+            Disaster.already_addressed: status,
+        },
+        synchronize_session=False,
+    )
+    db.commit()
+    return "updated disaster status"
+
+
+def free_es_from_track_table(disaster_id: int, db: Session):
+    data = db.query(KeepTrack).filter(KeepTrack.disaster_id == disaster_id).all()
+    print(f"data =======>  {data}")
+    for row in data:
+
+        print(f"row ===> {row.disaster_id}")
+        track_id = row[0]
+        es_id = row[2]
+        units_busy = row[3]
+        db.query(EmergencyService).filter(EmergencyService.id == es_id).update(
+            {
+                EmergencyService.units_busy: EmergencyService.units_busy - units_busy,
+                EmergencyService.units_available: EmergencyService.units_available
+                + units_busy,
+            },
+            synchronize_session=False,
+        )
+        db.commit()
+        db.query(KeepTrack).filter(KeepTrack.id == track_id).delete()
+        db.commit()
+
+    # delete the disaster after freeing the es?
+    # db.query(Disaster).filter(Disaster.id == disaster_id).delete()
+    # db.commit()
