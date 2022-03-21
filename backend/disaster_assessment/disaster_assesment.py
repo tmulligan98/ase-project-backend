@@ -181,7 +181,11 @@ class NearestServices:
             ):
                 for service, info in x.items():
                     for name, details in info.items():
-                        if service == "ambulance" and details["units available"] != 0:
+                        if (
+                            service == "ambulance"
+                            and details["units available"] != 0
+                            and not allocated_ambulance_station
+                        ):
                             if (
                                 details["units available"] >= no_services_needed
                             ):  # see if the service can cater the no. of needed services
@@ -204,7 +208,11 @@ class NearestServices:
                                     db=db,
                                 )
 
-                        if service == "garda" and details["units available"] != 0:
+                        if (
+                            service == "garda"
+                            and details["units available"] != 0
+                            and not allocated_garda_station
+                        ):
                             if details["units available"] >= no_services_needed:
                                 allocated_garda_station.append(
                                     {
@@ -227,6 +235,7 @@ class NearestServices:
                         if (
                             service == "fire_brigade"
                             and details["units available"] != 0
+                            and not allocated_firebrigade_station
                         ):
                             if details["units available"] >= no_services_needed:
                                 allocated_firebrigade_station.append(
