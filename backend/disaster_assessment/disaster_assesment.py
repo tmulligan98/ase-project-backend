@@ -114,7 +114,7 @@ class NearestServices:
 
     @staticmethod
     def fetch_updated_es(db):
-        emergency_res = get_emergency_services_db(db, skip=10, limit=100)
+        emergency_res = get_emergency_services_db(db, skip=0, limit=100)
         ers = []
         for er in emergency_res:
             ers.append(json.loads(er.json()))
