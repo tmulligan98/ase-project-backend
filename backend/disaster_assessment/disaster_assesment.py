@@ -261,14 +261,22 @@ class NearestServices:
 
         for disaster in disasters:
             if not disaster["already_addressed"]:
+                print(f'disaster status =======> {disaster["already_addressed"]}')
                 emergency_services = NearestServices.fetch_updated_es(db)
+                print(f"emergency services =======> {emergency_services}")
                 distributed_es = NearestServices.distribute_services(emergency_services)
+                print(f"distributed_es ====> {distributed_es}")
                 (
                     first_nearest_services,
                     second_nearest_services,
                     third_nearest_services,
                 ) = NearestServices.n_nearest_services(disaster, distributed_es)
+
+                print(f" first ===> {first_nearest_services}")
+                print(f" second ===> {second_nearest_services}")
+                print(f" third ===> {third_nearest_services}")
                 no_services_needed = NearestServices.services_needed(disaster)
+                print(f"no_services_needed ====> {no_services_needed}")
 
                 (
                     allocated_ambulance_station,
@@ -282,6 +290,12 @@ class NearestServices:
                     disaster,
                     db,
                 )
+                print(f" allocated ambulance ===> {allocated_ambulance_station}")
+                print(f" allocated_garda_station ===> {allocated_garda_station}")
+                print(
+                    f" allocated_firebrigade_station ===> {allocated_firebrigade_station}"
+                )
+
                 self.data_to_return[disaster["id"]] = {
                     "ambulance": allocated_ambulance_station,
                     "police": allocated_garda_station,

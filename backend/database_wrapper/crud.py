@@ -287,8 +287,8 @@ def free_es_from_track_table(disaster_id: int, db: Session):
     data = db.query(KeepTrack).filter(KeepTrack.disaster_id == disaster_id).all()
     print(f"data =======>  {data}")
     for row in data:
-        print(f"row ===> {row[0]}")
-        print(f"row ===> {row[0].disaster_id}")
+
+        print(f"row ===> {row.disaster_id}")
         track_id = row[0]
         es_id = row[2]
         units_busy = row[3]
