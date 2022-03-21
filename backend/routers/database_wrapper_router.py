@@ -1,6 +1,7 @@
 from backend.database_wrapper.crud import (
     add_route,
     add_route_waypoint,
+    get_disaster_by_id,
     get_disaster_route_ids,
     get_route_waypoints,
     get_tracks,
@@ -42,11 +43,17 @@ from backend.database_wrapper import (
     DisasterCreateEmergency,
     add_constant_services,
     get_emergency_service,
+    update_disaster_verification,
+    update_disaster_completion,
+    DisasterVerify,
+    DisasterCompletion,
 )
+from backend.utils import init_logger
 from typing import List
 import json
 
 router = APIRouter()
+logger = init_logger()
 
 
 # ---- Civilian Users ----
@@ -98,9 +105,52 @@ def read_user(user_id: str, db: SESSION_LOCAL = Depends(get_db)):
 
 
 # ---- Disasters ----
+
+
+@router.post("/disaster_completion", response_model=str)
+def complete_disaster(
+    request: Request, body: DisasterCompletion, db: SESSION_LOCAL = Depends(get_db)
+):
+    # Try and see if disaster exists in db
+    disaster = get_disaster_by_id(db, body.id)
+    if not disaster:
+        raise HTTPException(status_code=400, detail="Disaster does not exist!")
+    try:
+        update_disaster_completion(db, body)
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(status_code=500, detail=f"Error Encountered: {e}")
+    return "done"
+
+
+@router.post("/disaster_verification", response_model=str)
+def verify_disaster(
+    request: Request, body: DisasterVerify, db: SESSION_LOCAL = Depends(get_db)
+):
+
+    # Try and see if disaster exists in db
+    disaster = get_disaster_by_id(db, body.id)
+    if not disaster:
+        raise HTTPException(status_code=400, detail="Disaster does not exist!")
+    try:
+        update_disaster_verification(db, body)
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(status_code=500, detail=f"Error Encountered: {e}")
+    return "done"
+
+
 @router.get("/disasters/", response_model=List[DisasterResponse])
-def get_disasters(skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)):
-    disasters = get_disasters_from_db(db, skip=skip, limit=limit)
+def get_disasters(
+    skip: int = 0,
+    limit: int = 100,
+    verified: bool = None,
+    completed: bool = None,
+    db: SESSION_LOCAL = Depends(get_db),
+):
+    disasters = get_disasters_from_db(
+        db, skip=skip, limit=limit, verified=verified, completed=completed
+    )
     return disasters
 
 
