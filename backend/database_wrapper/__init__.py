@@ -8,6 +8,8 @@ from .schemas import (
     DisasterCreate,
     CivilianUserModel,
     DisasterCreateEmergency,
+    DisasterVerify,
+    DisasterCompletion,
 )
 
 from .crud import (
@@ -25,6 +27,8 @@ from .crud import (
     get_civ_users,
     add_constant_services,
     get_emergency_service,
+    update_disaster_verification,
+    update_disaster_completion,
 )
 
 
@@ -56,4 +60,8 @@ ___all__ = [
     "get_civ_users",
     "add_constant_services",
     "get_emergency_service",
+    "update_disaster_verification",
+    "DisasterVerify",
+    "DisasterCompletion",
+    "update_disaster_completion",
 ]
