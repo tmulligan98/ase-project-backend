@@ -349,7 +349,7 @@ def free_es_from_track_table(disaster_id: int, db: Session):
             synchronize_session=False,
         )
         db.commit()
-        db.query(KeepTrack).filter(KeepTrack.id == row.track_id).delete()
+        db.query(KeepTrack).filter(KeepTrack.id == row.id).delete()
         db.commit()
 
     return "done freeing"
