@@ -257,4 +257,4 @@ def nearest_services(
     "/free services/{disaster_id}",
 )
 def free_services(disaster_id, db: SESSION_LOCAL = Depends(get_db)):
-    free_es_from_track_table(disaster_id, db=db)
+    return free_es_from_track_table(disaster_id, db=db)
