@@ -317,16 +317,16 @@ class NearestServices:
                     es = get_emergency_service(db, row.es_id)
                     print(f"es ==> {es}")
                     service = {
-                        "name": es["name"],
-                        "lat": es["lat"],
-                        "long": es["long"],
+                        "name": es.name,
+                        "lat": es.lat,
+                        "long": es.long,
                     }
-
-                    if es["type"] == 0:
+                    print(f"service ===> {service}")
+                    if es.type == 0:
                         allocated_garda_station.append(service)
-                    elif es["type"] == 1:
+                    elif es.type == 1:
                         allocated_firebrigade_station.append(service)
-                    elif es["type"] == 2:
+                    elif es.type == 2:
                         allocated_ambulance_station.append(service)
 
                 print(allocated_ambulance_station)
