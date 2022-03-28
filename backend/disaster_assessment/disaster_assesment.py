@@ -4,9 +4,12 @@ from backend.database_wrapper.crud import (
     add_track_to_db,
     get_emergency_services_db,
     update_disaster_status,
+    get_emergency_service,
+    get_tracks_for_a_disaster,
 )
 from fastapi import APIRouter
 import json
+from backend.emergency_services.models import ServiceType
 
 router = APIRouter()
 
@@ -305,5 +308,38 @@ class NearestServices:
                 NearestServices.update_already_addressed_status(
                     disaster["id"], True, db
                 )
+            else:
+                tracks = get_tracks_for_a_disaster(db, disaster["id"])
+                print(f"tracks ==> {tracks}")
+                allocated_ambulance_station = []
+                allocated_firebrigade_station = []
+                allocated_garda_station = []
+                for row in tracks:
+                    es = get_emergency_service(db, row.es_id)
+                    print(f"es ==> {es}")
+                    service = {
+                        "name": es.name,
+                        "lat": es.lat,
+                        "long": es.long,
+                    }
+                    print(f"service ===> {service}")
+                    print(f"es type==> {es.type}")
+                    print(f"es type type==> {type(es.type)}")
 
+                    if es.type == ServiceType.GARDA:
+                        allocated_garda_station.append(service)
+                    elif es.type == ServiceType.FIRE_BRIGADE:
+                        allocated_firebrigade_station.append(service)
+                    elif es.type == ServiceType.AMBULANCE:
+                        allocated_ambulance_station.append(service)
+
+                print(allocated_ambulance_station)
+                print(allocated_firebrigade_station)
+                print(allocated_garda_station)
+
+                self.data_to_return[disaster["id"]] = {
+                    "ambulance": allocated_ambulance_station,
+                    "police": allocated_garda_station,
+                    "fire_brigade": allocated_firebrigade_station,
+                }
         return self.data_to_return
