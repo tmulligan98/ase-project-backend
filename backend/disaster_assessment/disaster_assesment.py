@@ -310,21 +310,16 @@ class NearestServices:
                 )
             else:
                 tracks = get_tracks_for_a_disaster(db, disaster["id"])
-                print(f"tracks ==> {tracks}")
                 allocated_ambulance_station = []
                 allocated_firebrigade_station = []
                 allocated_garda_station = []
                 for row in tracks:
                     es = get_emergency_service(db, row.es_id)
-                    print(f"es ==> {es}")
                     service = {
                         "name": es.name,
                         "lat": es.lat,
                         "long": es.long,
                     }
-                    print(f"service ===> {service}")
-                    print(f"es type==> {es.type}")
-                    print(f"es type type==> {type(es.type)}")
 
                     if es.type == ServiceType.GARDA:
                         allocated_garda_station.append(service)
@@ -332,10 +327,6 @@ class NearestServices:
                         allocated_firebrigade_station.append(service)
                     elif es.type == ServiceType.AMBULANCE:
                         allocated_ambulance_station.append(service)
-
-                print(allocated_ambulance_station)
-                print(allocated_firebrigade_station)
-                print(allocated_garda_station)
 
                 self.data_to_return[disaster["id"]] = {
                     "ambulance": allocated_ambulance_station,
