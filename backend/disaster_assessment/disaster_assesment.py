@@ -308,7 +308,7 @@ class NearestServices:
                     disaster["id"], True, db
                 )
             else:
-                tracks = get_tracks_for_a_disaster(db, disaster["id"], 0, 100)
+                tracks = get_tracks_for_a_disaster(db, disaster["id"])
                 print(f"tracks ==> {tracks}")
                 allocated_ambulance_station = []
                 allocated_firebrigade_station = []
