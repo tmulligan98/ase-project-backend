@@ -322,6 +322,9 @@ class NearestServices:
                         "long": es.long,
                     }
                     print(f"service ===> {service}")
+                    print(f"es type==> {es.type}")
+                    print(f"es type type==> {type(es.type)}")
+
                     if es.type == 0:
                         allocated_garda_station.append(service)
                     elif es.type == 1:
