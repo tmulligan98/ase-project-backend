@@ -104,7 +104,6 @@ def get_disasters_from_db(
     verified: bool = None,
     completed: bool = None,
 ):
-
     if completed is not None:
         temp = (
             db.query(Disaster)
@@ -310,6 +309,18 @@ def add_track_to_db(disaster_id: int, es_id: int, units_busy: int, db: Session):
 
 def get_tracks(db: Session, skip: int = 0, limit: int = 100):
     return db.query(KeepTrack).offset(skip).limit(limit).all()
+
+
+def get_tracks_for_a_disaster(
+    db: Session, disaster_id: int, skip: int = 0, limit: int = 100
+):
+    return (
+        db.query(KeepTrack)
+        .offset(skip)
+        .limit(limit)
+        .filter(KeepTrack.disaster_id == disaster_id)
+        .all()
+    )
 
 
 def update_es_db(es_id: int, units_allocated: int, db: Session):

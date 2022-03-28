@@ -4,6 +4,8 @@ from backend.database_wrapper.crud import (
     add_track_to_db,
     get_emergency_services_db,
     update_disaster_status,
+    get_emergency_service,
+    get_tracks_for_a_disaster,
 )
 from fastapi import APIRouter
 import json
@@ -305,5 +307,35 @@ class NearestServices:
                 NearestServices.update_already_addressed_status(
                     disaster["id"], True, db
                 )
+            else:
+                tracks = get_tracks_for_a_disaster(db, disaster["id"], 0, 100)
+                print(f"tracks ==> {tracks}")
+                allocated_ambulance_station = []
+                allocated_firebrigade_station = []
+                allocated_garda_station = []
+                for row in tracks:
+                    es = get_emergency_service(db, row.es_id)
+                    print(f"es ==> {es}")
+                    service = {
+                        "name": es["name"],
+                        "lat": es["lat"],
+                        "long": es["long"],
+                    }
 
+                    if es["type"] == 0:
+                        allocated_garda_station.append(service)
+                    elif es["type"] == 1:
+                        allocated_firebrigade_station.append(service)
+                    elif es["type"] == 2:
+                        allocated_ambulance_station.append(service)
+
+                print(allocated_ambulance_station)
+                print(allocated_firebrigade_station)
+                print(allocated_garda_station)
+
+                self.data_to_return[disaster["id"]] = {
+                    "ambulance": allocated_ambulance_station,
+                    "police": allocated_garda_station,
+                    "fire_brigade": allocated_firebrigade_station,
+                }
         return self.data_to_return
