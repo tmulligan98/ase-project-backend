@@ -9,6 +9,7 @@ from backend.database_wrapper.crud import (
 )
 from fastapi import APIRouter
 import json
+from backend.emergency_services.models import ServiceType
 
 router = APIRouter()
 
@@ -325,11 +326,11 @@ class NearestServices:
                     print(f"es type==> {es.type}")
                     print(f"es type type==> {type(es.type)}")
 
-                    if es.type == 0:
+                    if es.type == ServiceType.GARDA:
                         allocated_garda_station.append(service)
-                    elif es.type == 1:
+                    elif es.type == ServiceType.FIRE_BRIGADE:
                         allocated_firebrigade_station.append(service)
-                    elif es.type == 2:
+                    elif es.type == ServiceType.AMBULANCE:
                         allocated_ambulance_station.append(service)
 
                 print(allocated_ambulance_station)
