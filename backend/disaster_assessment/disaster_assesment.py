@@ -273,7 +273,7 @@ class NearestServices:
     def get_nearest_services(self, db, disasters):
 
         for disaster in disasters:
-            if not disaster["already_addressed"]:
+            if not disaster["already_addressed"] and disaster["verified"]:
 
                 emergency_services = NearestServices.fetch_updated_es(db)
 
@@ -309,7 +309,7 @@ class NearestServices:
                 NearestServices.update_already_addressed_status(
                     disaster["id"], True, db
                 )
-            else:
+            elif disaster["already_addressed"] and disaster["verified"]:
                 tracks = get_tracks_for_a_disaster(db, disaster["id"])
                 allocated_ambulance_station = []
                 allocated_firebrigade_station = []
