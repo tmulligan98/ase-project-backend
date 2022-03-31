@@ -1,10 +1,8 @@
 import pytest
 from backend.database_wrapper.schemas import DisasterResponse
-from backend.emergency_services.models import (
-    EmergencyServiceModel,
-    EmergencyServiceResponse,
-)
+from backend.emergency_services.models import EmergencyServiceModel
 from .example_emergency_services import EXAMPLE_EMERGENCY_SERVICES
+from backend.disaster_assessment.disaster_assesment import NearestServices
 
 
 @pytest.fixture
@@ -46,18 +44,16 @@ def example_single_emergency_service():
 
 @pytest.fixture
 def example_multiple_emergency_services():
-    return list(
-        map(
-            lambda x: EmergencyServiceResponse(
-                id=x["id"],
-                name=x["name"],
-                type=x["type"],
-                lat=x["lat"],
-                long=x["long"],
-                units=x["units"],
-                units_available=x["units_available"],
-                units_busy=x["units_busy"],
-            ),
-            EXAMPLE_EMERGENCY_SERVICES,
-        )
-    )
+    """
+    Test fixture for multiple EmergencyServiceModels
+    """
+    return EXAMPLE_EMERGENCY_SERVICES
+
+
+@pytest.fixture
+def example_distributed_emergency_services():
+    """
+    Test Fixture for Distributed Emergency Services using
+    NearestServices.distribute_services method
+    """
+    return NearestServices.distribute_services(EXAMPLE_EMERGENCY_SERVICES)
