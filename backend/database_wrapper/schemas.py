@@ -118,3 +118,13 @@ class KeepTrackCreate(KeepTrackBase):
 
 class KeepTrackResponse(KeepTrackBase):
     pass
+
+
+# transport services
+class TransportServiceBase(BaseModel):
+    name: str
+    location: str
+
+
+class TransportServiceCreate(EmergencyServiceBase):
+    pass

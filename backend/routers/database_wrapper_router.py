@@ -19,6 +19,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from backend.emergency_services.models import (
     EmergencyServiceModel,
     EmergencyServiceResponse,
+    TransportServiceResponse,
 )
 from backend.disaster_assessment.disaster_assesment import NearestServices
 from backend.database_wrapper import get_db
@@ -33,6 +34,7 @@ from backend.database_wrapper import (
     get_users,
     add_disaster_to_db,
     get_emergency_services_db,
+    get_transport_services_db,
     add_emergency_services,
     DisasterCreate,
     # get_disaster_by_id,
@@ -175,12 +177,20 @@ def add_disaster_emrg(
     )
 
 
-# ----- Emergency Services -----
+# ----- Emergency and Transport Services -----
 @router.get("/emergency_services/", response_model=List[EmergencyServiceResponse])
 def get_emergency_services(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
     res = get_emergency_services_db(db, skip=skip, limit=limit)
+    return res
+
+
+@router.get("/transport_services/", response_model=List[TransportServiceResponse])
+def get_transport_services(
+    skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
+):
+    res = get_transport_services_db(db, skip=skip, limit=limit)
     return res
 
 

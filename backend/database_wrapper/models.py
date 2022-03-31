@@ -70,6 +70,17 @@ class EmergencyService(Base):
     units_busy = Column(Integer)
 
 
+class TransportService(Base):
+    __tablename__ = "transport_services"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name = Column(String(50), unique=True, index=True)
+    lat = Column(Float)
+    long = Column(Float)
+    units = Column(Integer)
+    units_available = Column(Integer)
+    units_busy = Column(Integer)
+
+
 class Route(Base):
     __tablename__ = "routes"
 

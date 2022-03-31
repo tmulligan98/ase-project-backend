@@ -1,4 +1,4 @@
-from .models import EmergencyServiceModel, ServiceType
+from .models import EmergencyServiceModel, ServiceType, TransportServiceModel
 
 
 EMERGENCY_SERVICES = [
@@ -162,6 +162,33 @@ EMERGENCY_SERVICES = [
         long=-6.23743,
         units=6,
         units_available=6,
+        units_busy=0,
+    ),
+]
+
+TRANSPORT_SERVICES = [
+    TransportServiceModel(
+        name="Busáras",
+        lat=53.349764834055144,
+        long=-6.252164915261029,
+        units=20,
+        units_available=20,
+        units_busy=0,
+    ),
+    TransportServiceModel(
+        name="Dublin Bus Garage Ringsend",
+        lat=53.34187548718383,
+        long=-6.232750850392618,
+        units=20,
+        units_available=20,
+        units_busy=0,
+    ),
+    TransportServiceModel(
+        name="Dublin Bus Garage Summerhill",
+        lat=53.356047854547164,
+        long=-6.254982613313899,
+        units=25,
+        units_available=25,
         units_busy=0,
     ),
 ]
