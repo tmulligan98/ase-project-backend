@@ -1,3 +1,4 @@
+from typing import List, Dict
 import haversine as hs
 from backend.database_wrapper.crud import (
     update_es_db,
@@ -19,7 +20,7 @@ class NearestServices:
         self.data_to_return = {}
 
     @staticmethod
-    def n_nearest_services(disaster, distributed_es):
+    def n_nearest_services(disaster: Dict, distributed_es: Dict):
         all_services = {}
         first_nearest_services = {}
         second_nearest_services = {}
@@ -125,7 +126,7 @@ class NearestServices:
         return ers
 
     @staticmethod
-    def distribute_services(emergency_services):
+    def distribute_services(emergency_services: List[Dict]):
         es_garda = []
         es_fire_brigade = []
         es_ambulance = []
