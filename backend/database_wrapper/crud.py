@@ -106,7 +106,7 @@ def get_disasters_from_db(
     verified: bool = None,
     completed: bool = None,
 ):
-    if completed is not None:
+    if completed is not None and verified is None:
         temp = (
             db.query(Disaster)
             .filter(Disaster.completed == completed)
@@ -255,6 +255,10 @@ def get_emergency_service(db: Session, id: int):
     return db.query(EmergencyService).filter(EmergencyService.id == id).first()
 
 
+def get_transport_service(db: Session, id: int):
+    return db.query(TransportService).filter(TransportService.id == id).first()
+
+
 def add_constant_services(db: Session):
     """
     Utility function to add all emergency and transport services to the database
@@ -337,7 +341,19 @@ def get_route_waypoints(db: Session, route_id: int):
 
 
 def add_track_to_db(disaster_id: int, es_id: int, units_busy: int, db: Session):
-    new_track = KeepTrack(disaster_id=disaster_id, es_id=es_id, units_busy=units_busy)
+    new_track = KeepTrack(
+        disaster_id=disaster_id, es_id=es_id, ts_id=None, units_busy=units_busy
+    )
+    db.add(new_track)
+    db.commit()
+    db.refresh(new_track)
+    return
+
+
+def add_ts_track_to_db(disaster_id: int, ts_id: int, units_busy: int, db: Session):
+    new_track = KeepTrack(
+        disaster_id=disaster_id, ts_id=ts_id, es_id=None, units_busy=units_busy
+    )
     db.add(new_track)
     db.commit()
     db.refresh(new_track)
@@ -363,6 +379,19 @@ def update_es_db(es_id: int, units_allocated: int, db: Session):
     )
     db.commit()
     return "updated es units"
+
+
+def update_ts_db(es_id: int, units_allocated: int, db: Session):
+    db.query(TransportService).filter(TransportService.id == es_id).update(
+        {
+            TransportService.units_busy: TransportService.units_busy + units_allocated,
+            TransportService.units_available: TransportService.units_available
+            - units_allocated,
+        },
+        synchronize_session=False,
+    )
+    db.commit()
+    return "updated ts units"
 
 
 def update_disaster_status(d_id: int, status: bool, db: Session):

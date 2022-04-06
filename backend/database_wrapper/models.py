@@ -112,5 +112,9 @@ class KeepTrack(Base):
         Integer,
         ForeignKey(EmergencyService.id),
     )
+    ts_id = Column(
+        Integer,
+        ForeignKey(TransportService.id),
+    )
 
     units_busy = Column(Integer)
