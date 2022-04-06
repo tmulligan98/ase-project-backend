@@ -6,6 +6,7 @@ class ServiceType(Enum):
     GARDA = 0
     FIRE_BRIGADE = 1
     AMBULANCE = 2
+    ARMY = 3
 
 
 class EmergencyServiceModel(BaseModel):
