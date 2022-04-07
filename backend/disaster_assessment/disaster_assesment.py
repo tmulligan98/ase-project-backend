@@ -38,7 +38,7 @@ class NearestServices:
         if disaster["disaster_type"] == 4:  # bio_hazard
             es_of_consideration = ["fire_brigade", "ambulance", "garda"]
         if disaster["disaster_type"] == 5:  # meteor
-            es_of_consideration = ["fire_brigade", "ambulance", "garda"]
+            es_of_consideration = ["fire_brigade", "ambulance", "garda", "army"]
         if disaster["disaster_type"] == 6:  # storm
             es_of_consideration = ["fire_brigade", "ambulance", "garda"]
         if disaster["disaster_type"] == 7:  # other
@@ -130,6 +130,7 @@ class NearestServices:
         es_garda = []
         es_fire_brigade = []
         es_ambulance = []
+        es_army = []
 
         for es in emergency_services:
             if es["type"] == 0:
@@ -138,11 +139,14 @@ class NearestServices:
                 es_fire_brigade.append(es)
             elif es["type"] == 2:
                 es_ambulance.append(es)
+            elif es["type"] == 3:
+                es_army.append(es)
 
         distributed_es = {
             "fire_brigade": es_fire_brigade,
             "ambulance": es_ambulance,
             "garda": es_garda,
+            "army": es_army,
         }
         return distributed_es
 
@@ -172,6 +176,7 @@ class NearestServices:
         allocated_ambulance_station = []
         allocated_firebrigade_station = []
         allocated_garda_station = []
+        allocated_army_station = []
 
         for x in [  # allocating services
             first_nearest_services,
@@ -182,6 +187,7 @@ class NearestServices:
                 not allocated_firebrigade_station
                 or not allocated_ambulance_station
                 or not allocated_garda_station
+                or not allocated_army_station
             ):
                 for service, info in x.items():
                     for name, details in info.items():
@@ -260,10 +266,35 @@ class NearestServices:
                                     db=db,
                                 )
 
+                        if (
+                            service == "army"
+                            and details["units available"] != 0
+                            and not allocated_army_station
+                        ):
+                            if details["units available"] >= no_services_needed:
+                                allocated_army_station.append(
+                                    {
+                                        "name": name,
+                                        "distance": details["distance"],
+                                        "lat": details["lat"],
+                                        "long": details["long"],
+                                    }
+                                )
+                                update_es_db(  # update emergency service table
+                                    details["id"], no_services_needed, db=db
+                                )
+                                add_track_to_db(  # keep track of which services are busy with which disaster
+                                    disaster["id"],
+                                    details["id"],
+                                    no_services_needed,
+                                    db=db,
+                                )
+
         return (
             allocated_ambulance_station,
             allocated_garda_station,
             allocated_firebrigade_station,
+            allocated_army_station,
         )
 
     @staticmethod
@@ -291,6 +322,7 @@ class NearestServices:
                     allocated_ambulance_station,
                     allocated_garda_station,
                     allocated_firebrigade_station,
+                    allocated_army_station,
                 ) = NearestServices.allocate_services(
                     first_nearest_services,
                     second_nearest_services,
@@ -304,6 +336,7 @@ class NearestServices:
                     "ambulance": allocated_ambulance_station,
                     "police": allocated_garda_station,
                     "fire_brigade": allocated_firebrigade_station,
+                    "army": allocated_army_station,
                 }
 
                 NearestServices.update_already_addressed_status(
@@ -314,6 +347,7 @@ class NearestServices:
                 allocated_ambulance_station = []
                 allocated_firebrigade_station = []
                 allocated_garda_station = []
+                allocated_army_station = []
                 for row in tracks:
                     es = get_emergency_service(db, row.es_id)
                     service = {
@@ -328,10 +362,13 @@ class NearestServices:
                         allocated_firebrigade_station.append(service)
                     elif es.type == ServiceType.AMBULANCE:
                         allocated_ambulance_station.append(service)
+                    elif es.type == ServiceType.ARMY:
+                        allocated_army_station.append(service)
 
                 self.data_to_return[disaster["id"]] = {
                     "ambulance": allocated_ambulance_station,
                     "police": allocated_garda_station,
                     "fire_brigade": allocated_firebrigade_station,
+                    "army": allocated_army_station,
                 }
         return self.data_to_return
