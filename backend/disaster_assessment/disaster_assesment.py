@@ -1,3 +1,4 @@
+from typing import Dict
 import haversine as hs
 from backend.database_wrapper.crud import (
     get_transport_services_db,
@@ -25,7 +26,7 @@ class NearestServices:
         self.data_to_return = {}
 
     @staticmethod
-    def n_nearest_services(disaster, distributed_es):
+    def n_nearest_services(disaster: Dict, distributed_es: Dict):
         all_services = {}
         first_nearest_services = {}
         second_nearest_services = {}
@@ -399,7 +400,7 @@ class NearestServices:
     def get_nearest_services(self, db, disasters):
 
         for disaster in disasters:
-            if not disaster["already_addressed"]:
+            if not disaster["already_addressed"] and disaster["verified"]:
 
                 emergency_services = NearestServices.fetch_updated_es(db)
                 transport_services = NearestServices.fetch_updated_ts(db)
@@ -462,7 +463,7 @@ class NearestServices:
                 NearestServices.update_already_addressed_status(
                     disaster["id"], True, db
                 )
-            else:
+            elif disaster["already_addressed"] and disaster["verified"]:
                 tracks = get_tracks_for_a_disaster(db, disaster["id"])
                 allocated_ambulance_station = []
                 allocated_firebrigade_station = []
