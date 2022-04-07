@@ -9,6 +9,9 @@ class ServiceType(Enum):
     ARMY = 3
 
 
+# Emergency Services
+
+
 class EmergencyServiceModel(BaseModel):
     name: str
     type: ServiceType
@@ -27,5 +30,27 @@ class EmergencyServiceResponse(EmergencyServiceModel):
 
 
 class EmergencyServiceUpdate(BaseModel):
+    es_id: int
+    units_allocated: int
+
+
+# Transport services
+class TransportServiceModel(BaseModel):
+    name: str
+    lat: float
+    long: float
+    units: int
+    units_available: int
+    units_busy: int
+
+
+class TransportServiceResponse(TransportServiceModel):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class TransportServiceUpdate(BaseModel):
     es_id: int
     units_allocated: int
