@@ -1,7 +1,10 @@
 import pytest
 from backend.database_wrapper.schemas import DisasterResponse
 from backend.emergency_services.models import EmergencyServiceModel
-from .example_emergency_services import EXAMPLE_EMERGENCY_SERVICES
+from .example_emergency_services import (
+    EXAMPLE_EMERGENCY_SERVICES,
+    EXAMPLE_TRANSPORT_SERVICES,
+)
 from backend.disaster_assessment.disaster_assesment import NearestServices
 
 
@@ -15,6 +18,25 @@ def example_disaster():
         id=0,
         disaster_type=2,
         scale=2,
+        lat=53.34557035343706,
+        long=-6.2564185279844065,
+        radius=100,
+        already_addressed=False,
+        verified=False,
+        completed=False,
+    )
+
+
+@pytest.fixture
+def example_disaster_high_scale():
+    """
+    Test fixture for DisasterResponse
+        location : Trinity College Dublin
+    """
+    return DisasterResponse(
+        id=0,
+        disaster_type=2,
+        scale=10,
         lat=53.34557035343706,
         long=-6.2564185279844065,
         radius=100,
@@ -57,3 +79,12 @@ def example_distributed_emergency_services():
     NearestServices.distribute_services method
     """
     return NearestServices.distribute_services(EXAMPLE_EMERGENCY_SERVICES)
+
+
+@pytest.fixture
+def example_distributed_transport_services():
+    """
+    Test Fixture for Distributed Emergency Services using
+    NearestServices.distribute_services method
+    """
+    return {"bus": EXAMPLE_TRANSPORT_SERVICES}
