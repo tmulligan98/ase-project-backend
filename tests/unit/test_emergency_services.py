@@ -8,4 +8,3 @@ def test_emergency_service_type(
     assert example_single_emergency_service.type == ServiceType.FIRE_BRIGADE
     assert not example_single_emergency_service.type == ServiceType.AMBULANCE
     assert not example_single_emergency_service.type == ServiceType.GARDA
-    assert not example_single_emergency_service.type == ServiceType.ARMY

@@ -79,14 +79,4 @@ EXAMPLE_EMERGENCY_SERVICES = [
         "units_available": 10,
         "units_busy": 4,
     },
-    {  # Top of Marlborough Street
-        "id": 8,
-        "name": "Cathal Brugha Barracks",
-        "type": 3,  # ARMY
-        "lat": 53.32717172461035,
-        "long": -6.269010645901547,
-        "units": 5,
-        "units_available": 4,
-        "units_busy": 1,
-    },
 ]
