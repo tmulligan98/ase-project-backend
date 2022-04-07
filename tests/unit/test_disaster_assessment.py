@@ -25,7 +25,7 @@ def test_distribute_services(
     distributed_emergency_services = NearestServices.distribute_services(
         example_multiple_emergency_services
     )
-    assert len(distributed_emergency_services) == 3
+    assert len(distributed_emergency_services) == 4
     assert len(distributed_emergency_services["fire_brigade"]) == 1
     assert len(distributed_emergency_services["garda"]) == 3
     assert len(distributed_emergency_services["ambulance"]) == 4

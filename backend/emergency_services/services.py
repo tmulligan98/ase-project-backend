@@ -605,6 +605,15 @@ EMERGENCY_SERVICES = [
         units_available=6,
         units_busy=0,
     ),
+    EmergencyServiceModel(
+        name="Cathal Brugha Barracks",
+        type=ServiceType.ARMY,
+        lat=53.32717172461035,
+        long=-6.269010645901547,
+        units=6,
+        units_available=6,
+        units_busy=0,
+    ),
 ]
 
 TRANSPORT_SERVICES = [
