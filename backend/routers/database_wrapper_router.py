@@ -117,6 +117,7 @@ def complete_disaster(
         raise HTTPException(status_code=400, detail="Disaster does not exist!")
     try:
         update_disaster_completion(db, body)
+        free_es_from_track_table(body.id, db)
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=500, detail=f"Error Encountered: {e}")
@@ -253,8 +254,8 @@ def nearest_services(
     return NearestServices().get_nearest_services(db, drs)
 
 
-@router.put(
-    "/free_services/{disaster_id}",
-)
-def free_services(disaster_id, db: SESSION_LOCAL = Depends(get_db)):
-    return free_es_from_track_table(disaster_id, db=db)
+# @router.put(
+#    "/free_services/{disaster_id}",
+# )
+# def free_services(disaster_id, db: SESSION_LOCAL = Depends(get_db)):
+#    return free_es_from_track_table(disaster_id, db=db)
