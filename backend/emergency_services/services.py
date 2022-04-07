@@ -614,6 +614,24 @@ EMERGENCY_SERVICES = [
         units_available=6,
         units_busy=0,
     ),
+    EmergencyServiceModel(
+        name="McKee Barracks",
+        type=ServiceType.ARMY,
+        lat=53.35757090815345,
+        long=-6.299799975185834,
+        units=10,
+        units_available=10,
+        units_busy=0,
+    ),
+    EmergencyServiceModel(
+        name="Baldonnell",
+        type=ServiceType.ARMY,
+        lat=53.308449179536126,
+        long=-6.440892096339786,
+        units=10,
+        units_available=10,
+        units_busy=0,
+    ),
 ]
 
 TRANSPORT_SERVICES = [
