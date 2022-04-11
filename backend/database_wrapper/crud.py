@@ -1,9 +1,11 @@
 from sqlalchemy.orm import Session
-from backend.emergency_services import EMERGENCY_SERVICES
+from backend.emergency_services import EMERGENCY_SERVICES, TRANSPORT_SERVICES
 from backend.emergency_services.models import (
     EmergencyServiceResponse,
+    TransportServiceResponse,
 )
 from .models import (
+    TransportService,
     User,
     Disaster,
     EmergencyService,
@@ -104,7 +106,7 @@ def get_disasters_from_db(
     verified: bool = None,
     completed: bool = None,
 ):
-    if completed is not None:
+    if completed is not None and verified is None:
         temp = (
             db.query(Disaster)
             .filter(Disaster.completed == completed)
@@ -193,7 +195,7 @@ def add_disaster_to_db(
     )
 
 
-# ----- Emergency Services -----
+# -----Emergency and Transport Services -----
 
 
 def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
@@ -205,6 +207,27 @@ def get_emergency_services_db(db: Session, skip: int = 0, limit: int = 100):
                 id=x.id,
                 name=x.name,
                 type=x.type,
+                lat=x.lat,
+                long=x.long,
+                units=x.units,
+                units_available=x.units_available,
+                units_busy=x.units_busy,
+            ),
+            temp,
+        )
+    )
+
+    return res
+
+
+def get_transport_services_db(db: Session, skip: int = 0, limit: int = 100):
+    temp = db.query(TransportService).offset(skip).limit(limit).all()
+
+    res = list(
+        map(
+            lambda x: TransportServiceResponse(
+                id=x.id,
+                name=x.name,
                 lat=x.lat,
                 long=x.long,
                 units=x.units,
@@ -232,9 +255,13 @@ def get_emergency_service(db: Session, id: int):
     return db.query(EmergencyService).filter(EmergencyService.id == id).first()
 
 
+def get_transport_service(db: Session, id: int):
+    return db.query(TransportService).filter(TransportService.id == id).first()
+
+
 def add_constant_services(db: Session):
     """
-    Utility function to add the list of emergnency services to the database
+    Utility function to add all emergency and transport services to the database
     """
     res = list(
         map(
@@ -248,6 +275,20 @@ def add_constant_services(db: Session):
                 units_busy=x.units_busy,
             ),
             EMERGENCY_SERVICES,
+        )
+    )
+    db.bulk_save_objects(res)
+    res = list(
+        map(
+            lambda x: TransportService(
+                name=x.name,
+                lat=x.lat,
+                long=x.long,
+                units=x.units,
+                units_available=x.units_available,
+                units_busy=x.units_busy,
+            ),
+            TRANSPORT_SERVICES,
         )
     )
     db.bulk_save_objects(res)
@@ -300,7 +341,19 @@ def get_route_waypoints(db: Session, route_id: int):
 
 
 def add_track_to_db(disaster_id: int, es_id: int, units_busy: int, db: Session):
-    new_track = KeepTrack(disaster_id=disaster_id, es_id=es_id, units_busy=units_busy)
+    new_track = KeepTrack(
+        disaster_id=disaster_id, es_id=es_id, ts_id=None, units_busy=units_busy
+    )
+    db.add(new_track)
+    db.commit()
+    db.refresh(new_track)
+    return
+
+
+def add_ts_track_to_db(disaster_id: int, ts_id: int, units_busy: int, db: Session):
+    new_track = KeepTrack(
+        disaster_id=disaster_id, ts_id=ts_id, es_id=None, units_busy=units_busy
+    )
     db.add(new_track)
     db.commit()
     db.refresh(new_track)
@@ -326,6 +379,19 @@ def update_es_db(es_id: int, units_allocated: int, db: Session):
     )
     db.commit()
     return "updated es units"
+
+
+def update_ts_db(es_id: int, units_allocated: int, db: Session):
+    db.query(TransportService).filter(TransportService.id == es_id).update(
+        {
+            TransportService.units_busy: TransportService.units_busy + units_allocated,
+            TransportService.units_available: TransportService.units_available
+            - units_allocated,
+        },
+        synchronize_session=False,
+    )
+    db.commit()
+    return "updated ts units"
 
 
 def update_disaster_status(d_id: int, status: bool, db: Session):

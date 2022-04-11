@@ -80,3 +80,33 @@ EXAMPLE_EMERGENCY_SERVICES = [
         "units_busy": 4,
     },
 ]
+
+EXAMPLE_TRANSPORT_SERVICES = [
+    {  # Depot A
+        "id": 1,
+        "name": "DepotA",
+        "lat": 53.349910473896784,
+        "long": -6.2603089929254745,
+        "units": 20,
+        "units_available": 1,
+        "units_busy": 1,
+    },
+    {  # Dublin Bus Depot B
+        "id": 2,
+        "name": "DepotB",
+        "lat": 53.34991679811741,
+        "long": -6.268161390389537,
+        "units": 5,
+        "units_available": 0,
+        "units_busy": 5,
+    },
+    {  # Dublin Bus Depot C
+        "id": 7,
+        "name": "DepotC",
+        "lat": 53.34848285683542,
+        "long": -6.260326800013764,
+        "units": 14,
+        "units_available": 10,
+        "units_busy": 4,
+    },
+]
