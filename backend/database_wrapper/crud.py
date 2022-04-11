@@ -357,4 +357,7 @@ def free_es_from_track_table(disaster_id: int, db: Session):
         # delete the disaster after freeing the es
     db.query(Disaster).filter(Disaster.id == disaster_id).delete()
     db.commit()
+
+    sample = db.query(EmergencyService).filter(EmergencyService.busy > 0)
+    print(sample)
     return "done freeing"
