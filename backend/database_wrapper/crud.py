@@ -408,19 +408,31 @@ def update_disaster_status(d_id: int, status: bool, db: Session):
 def free_es_from_track_table(disaster_id: int, db: Session):
     data = db.query(KeepTrack).filter(KeepTrack.disaster_id == disaster_id).all()
     for row in data:
-        db.query(EmergencyService).filter(EmergencyService.id == row.es_id).update(
-            {
-                EmergencyService.units_busy: EmergencyService.units_busy
-                - row.units_busy,
-                EmergencyService.units_available: EmergencyService.units_available
-                + row.units_busy,
-            },
-            synchronize_session=False,
-        )
+        if row.es_id is not None:
+            db.query(EmergencyService).filter(EmergencyService.id == row.es_id).update(
+                {
+                    EmergencyService.units_busy: EmergencyService.units_busy
+                    - row.units_busy,
+                    EmergencyService.units_available: EmergencyService.units_available
+                    + row.units_busy,
+                },
+                synchronize_session=False,
+            )
+        elif row.ts_id is not None:
+            db.query(TransportService).filter(TransportService.id == row.ts_id).update(
+                {
+                    TransportService.units_busy: TransportService.units_busy
+                    - row.units_busy,
+                    TransportService.units_available: TransportService.units_available
+                    + row.units_busy,
+                },
+                synchronize_session=False,
+            )
         db.commit()
         db.query(KeepTrack).filter(KeepTrack.id == row.id).delete()
         db.commit()
         # delete the disaster after freeing the es
     db.query(Disaster).filter(Disaster.id == disaster_id).delete()
     db.commit()
+
     return "done freeing"
