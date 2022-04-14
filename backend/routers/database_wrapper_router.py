@@ -79,6 +79,9 @@ def handshake(request: Request, db: SESSION_LOCAL = Depends(get_db)):
 def read_civ_users(
     skip: int = 0, limit: int = 100, db: SESSION_LOCAL = Depends(get_db)
 ):
+    """
+    Return all civilian users
+    """
     users = get_civ_users(db, skip=skip, limit=limit)
     return users
 
@@ -86,6 +89,9 @@ def read_civ_users(
 # ---- Non Civilian Users ----
 @router.post("/users/", response_model=UserResponse)
 def add_user(user: UserCreate, db: SESSION_LOCAL = Depends(get_db)):
+    """
+    Add an emergency services user.
+    """
     db_user = get_user_by_id(db, user_id=user.user_id)
     if db_user:
         raise HTTPException(status_code=400, detail="User already registered")
@@ -113,6 +119,15 @@ def read_user(user_id: str, db: SESSION_LOCAL = Depends(get_db)):
 def complete_disaster(
     request: Request, body: DisasterCompletion, db: SESSION_LOCAL = Depends(get_db)
 ):
+    """Route to update disaster to completed on the DB
+
+    Parameters
+    ----------
+    body : DisasterCompletion
+        A body of details relating to the disaster to update
+    db : SESSION_LOCAL, optional
+        The current database session
+    """
     # Try and see if disaster exists in db
     disaster = get_disaster_by_id(db, body.id)
     if not disaster:
@@ -130,6 +145,15 @@ def complete_disaster(
 def verify_disaster(
     request: Request, body: DisasterVerify, db: SESSION_LOCAL = Depends(get_db)
 ):
+    """Route used by emergency services to verify a disaster
+
+    Parameters
+    ----------
+    body : DisasterVerify
+        Body of information relating to the disaster to be verified
+    db : SESSION_LOCAL, optional
+        The current database session
+    """
 
     # Try and see if disaster exists in db
     disaster = get_disaster_by_id(db, body.id)
@@ -151,6 +175,9 @@ def get_disasters(
     completed: bool = None,
     db: SESSION_LOCAL = Depends(get_db),
 ):
+    """
+    Get all disasters
+    """
     disasters = get_disasters_from_db(
         db, skip=skip, limit=limit, verified=verified, completed=completed
     )
@@ -161,6 +188,9 @@ def get_disasters(
 def add_disaster_civ(
     request: Request, disaster: DisasterCreate, db: SESSION_LOCAL = Depends(get_db)
 ):
+    """
+    Add a disaster
+    """
     client_host = request.client.host
     return add_disaster_to_db(
         db=db, disaster=disaster, host_name=client_host, is_civilian=True
