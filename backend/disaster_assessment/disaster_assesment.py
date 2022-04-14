@@ -27,6 +27,9 @@ class NearestServices:
 
     @staticmethod
     def n_nearest_services(disaster: Dict, distributed_es: Dict):
+        """
+        Calculate and return first, second and third nearest emergency services from the given disaster
+        """
         all_services = {}
         first_nearest_services = {}
         second_nearest_services = {}
@@ -124,6 +127,9 @@ class NearestServices:
 
     @staticmethod
     def n_nearest_ts_services(disaster, distributed_ts):
+        """
+        Calculate and return first, second and third nearest transport services from the given disaster
+        """
         first_nearest_services = {}
         second_nearest_services = {}
         third_nearest_services = {}
@@ -192,6 +198,9 @@ class NearestServices:
 
     @staticmethod
     def fetch_updated_es(db):
+        """
+        Fetch updated emergency services
+        """
         emergency_res = get_emergency_services_db(db, skip=0, limit=100)
         ers = []
         for er in emergency_res:
@@ -201,6 +210,9 @@ class NearestServices:
 
     @staticmethod
     def fetch_updated_ts(db):
+        """
+        Fetch updated transport services
+        """
         emergency_res = get_transport_services_db(db, skip=0, limit=100)
         ts = []
         for t in emergency_res:
@@ -210,6 +222,10 @@ class NearestServices:
 
     @staticmethod
     def distribute_services(emergency_services):
+        """
+        Seperate out and return the garda, firebrigade, ambulance and army services
+        """
+
         es_garda = []
         es_fire_brigade = []
         es_ambulance = []
@@ -235,6 +251,9 @@ class NearestServices:
 
     @staticmethod
     def services_needed(disaster):
+        """
+        Determine the number of services needed for the given disaster based on the scale
+        """
         no_services_needed = 0
         transport_services_required = 0
         if (
@@ -258,6 +277,10 @@ class NearestServices:
         disaster,
         db,
     ):
+        """
+        Out of the first, second and third nearest emergency services,
+        select a service that has enough units to satisfy the disaster requirement
+        """
         allocated_ambulance_station = []
         allocated_firebrigade_station = []
         allocated_garda_station = []
@@ -391,6 +414,10 @@ class NearestServices:
         disaster,
         db,
     ):
+        """
+        Out of the first, second and third nearest transport services,
+        select a service that has enough units to satisfy the disaster requirement
+        """
         allocated_transport_service = []
 
         for x in [  # allocating services
@@ -426,9 +453,16 @@ class NearestServices:
 
     @staticmethod
     def update_already_addressed_status(d_id, status, db):
+        """
+        Update the 'already addressed' field in the disaster table for the given disaster ID'
+        """
         update_disaster_status(d_id, status, db)
 
     def get_nearest_services(self, db, disasters):
+        """
+        Calculate and return the nearest emergency and transport services
+        available for each verified disaster in the database
+        """
 
         for disaster in disasters:
             if not disaster["already_addressed"] and disaster["verified"]:
