@@ -11,6 +11,7 @@ from datetime import timedelta
 
 from pydantic import BaseModel
 from backend.utils import SETTINGS, init_logger
+from typing import Dict
 
 router = APIRouter()
 logger = init_logger()
@@ -26,7 +27,28 @@ async def login_for_access_token(
     body: AuthModel,
     response: Response,
     db: Session = Depends(get_db),
-):
+) -> Dict[str, str]:
+    """Route to fetch an access token, given a user email and password
+
+    Parameters
+    ----------
+    body : AuthModel
+        Body containing the Emergency Service Login details
+    response : Response
+        HTTP response
+    db : Session, optional
+        Current database session
+    Returns
+    -------
+    _type_
+        _description_
+
+    Raises
+    ------
+    HTTPException
+        _description_
+    """
+
     user = authenticate_user(db, body.username, body.password)
     if not user:
         response.status_code = status.HTTP_401_UNAUTHORIZED
