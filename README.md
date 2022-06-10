@@ -2,6 +2,7 @@
 
 ## What's this?
 The backend for our group's Disaster Management System
+Front end is found [here:](https://github.com/cormac-doyle/disaster-assessment-application-frontend)
 
 ## Setup and Installation
 
