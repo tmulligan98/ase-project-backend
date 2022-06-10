@@ -1,5 +1,8 @@
 # ase-project-backend
 
+## What's this?
+The backend for our group's Disaster Management System
+
 ## Setup and Installation
 
 ### Python
