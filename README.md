@@ -1,9 +1,9 @@
 # ase-project-backend
 
 ## What's this?
-The backend for our group's Disaster Management System
-Our front end is found [here](https://github.com/cormac-doyle/disaster-assessment-application-frontend)
-All of this is deployed very nicely on Heroku!
+- The backend for our group's Disaster Management System
+- Our front end is found [here](https://github.com/cormac-doyle/disaster-assessment-application-frontend)
+- All of this is deployed very nicely on Heroku!
 
 ## Setup and Installation
 
