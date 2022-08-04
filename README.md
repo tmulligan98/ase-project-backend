@@ -2,7 +2,7 @@
 
 ## What's this?
 - The backend for our group's Disaster Management System
-- Our front end is found [here](https://github.com/cormac-doyle/disaster-assessment-application-frontend). **(Where can find a full breakdown of the project's features)**
+- Our front end is found [here](https://github.com/cormac-doyle/disaster-assessment-application-frontend). **(Where you can find a full breakdown of the project's features)**
 - All of this is deployed very nicely on Heroku!
 
 ## Setup and Installation
